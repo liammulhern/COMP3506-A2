@@ -20,6 +20,9 @@ class SingleNode:
         self._data = data  # This is the payload data of the node
         self._next = None  # This is the "next" pointer to the next SingleNode
 
+    def __str__(self) -> str:
+        return str(self._data)
+
     def set_data(self, data: Any) -> None:
         self._data = data
 
@@ -31,14 +34,14 @@ class SingleNode:
 
     def get_next(self) -> SingleNode | None:
         return self._next
-
-
+    
 class SingleLinkedList:
     """
     Singly linked list. You may update it if you like.
     """
     def __init__(self) -> None:
-        self._head = None
+        self._head: SingleNode | None = None
+        self._tail: SingleNode | None = None
         self._size = 0
 
     def __str__(self) -> str:
@@ -49,7 +52,7 @@ class SingleLinkedList:
         cur = self.get_head()
         while cur is not None:
             # Assumes the data stored in cur has __str__ implemented
-            string_rep += str(cur.get_data()) + " -> "
+            string_rep += str(cur) + " -> "
             cur = cur.get_next()
         string_rep += "[EOL]"  # end of list == None
         return string_rep
@@ -66,12 +69,27 @@ class SingleLinkedList:
     def set_head(self, node: SingleNode) -> None:
         self._head = node
 
+        if self._size == 1:
+            self._tail = node
+
+    def get_tail(self) -> SingleNode | None:
+        return self._tail
+
+    def set_tail(self, node: SingleNode) -> None:
+        self._tail = node
+
+        if self._size == 1:
+            self._head = node
+
     def insert_to_front(self, node: SingleNode) -> None:
         """
         Insert a node to the front of the list
         """
         if self._head is not None:
             node.set_next(self._head)
+        else:
+            self._tail = node
+
         self._head = node
         self._size += 1
 
@@ -79,17 +97,13 @@ class SingleLinkedList:
         """
         Insert a node to the back of the list
         """
-        cur = self.get_head()
         # Check corner case; the head is yet to be set
-        if cur is None:
+        if self._tail is not None:
+            self._tail.set_next(node)
+        else:
             self._head = node
-            self._size += 1
-            return
-        # Keep going until the next of the current node is empty
-        while cur.get_next() is not None:
-            cur = cur.get_next()
-        # We are now on the last valid node, let's insert
-        cur.set_next(node)
+
+        self._tail = node
         self._size += 1
 
     def remove_from_front(self) -> SingleNode | None:

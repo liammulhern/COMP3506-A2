@@ -23,20 +23,21 @@ from structures.m_entry import *
 from structures.m_pqueue import PriorityQueue
 from structures.m_map import Map
 
+import tests.test_pqueue as pqueue_tests
+
 def test_pqueue() -> None:
     """
     A simple set of tests for the priority queue.
     This is not marked and is just here for you to test your code.
     """
     print ("==== Executing Priority Queue Tests ====")
-    my_pq = PriorityQueue()
-    my_pq.insert(0, "highest priority item")
-    my_pq.insert(10, "priority value 10 item")
-    assert (my_pq.get_size() == 2)
-    ###
-    # DO RIGOROUS TESTING HERE!
-    # Think before you submit to Gradescope ;-)
-    ###
+
+    pqueue_tests.test_empty_priority_queue()
+    pqueue_tests.test_insert_and_remove_highest_priority()
+    pqueue_tests.test_insert_and_get_highest_priority()
+    pqueue_tests.test_insert_and_get_multiple_times()
+    pqueue_tests.test_insert_same_priority()
+    pqueue_tests.test_insert_same_priority_and_remove_multiple_times()
 
 def test_map() -> None:
     """
@@ -76,8 +77,13 @@ def test_sort() -> None:
     # DO RIGOROUS TESTING HERE!
     ###
 
+def test_debug():
+    test_pqueue()
+    sys.exit()
+
 # The actual program we're running here
 if __name__ == "__main__":
+    test_debug()
 
     # Get and parse the command line arguments
     parser = argparse.ArgumentParser(description='COMP3506/7505 Assignment Two: Data Structure Tests')
