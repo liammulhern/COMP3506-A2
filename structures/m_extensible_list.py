@@ -18,6 +18,9 @@ class ExtensibleList:
         self._size = 0
         self._capacity = 4
 
+    def __repr__(self) -> str:
+        return str(self)
+
     def __str__(self) -> str:
         """
         Print the list as a string
@@ -144,6 +147,21 @@ class ExtensibleList:
     # Return the total capacity (the number of slots) of the list
     def get_capacity(self) -> int:
         return self._capacity
+
+    def reverse(self) -> None:
+        """
+        Reverse the extensible list.
+        """
+        start = 0
+        end = self._size - 1 
+
+        while start < end:
+            temp = self._data[start]
+            self._data[start] = self._data[end]
+            self._data[end] = temp
+
+            start += 1
+            end -= 1
 
     def sort(self) -> None:
         """

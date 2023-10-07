@@ -37,6 +37,12 @@ class Node:
     def get_data(self) -> Any:
         return self._data
 
+    def __str__(self) -> str:
+        return f"{self._id}" 
+    
+    def __repr__(self) -> str:
+        return str(self) 
+
 
 class LatticeNode(Node):
     """
@@ -132,6 +138,7 @@ class Graph:
         self._nodes = nodes if nodes is not None else []
         self._edges = edges if edges is not None else []
         self._weighted = weighted
+        self._size = len(self._nodes)
         if not self._weighted:
             for i in range(len(self._edges)):
                 self._edges[i] = [((e, 1) if type(e) == int else e) for e in self._edges[i]]
@@ -148,6 +155,9 @@ class Graph:
             return self._nodes[index]
         except IndexError:
             return None
+
+    def get_size(self) -> int:
+        return self._size
 
     def get_neighbours(self, index: int) -> list[Node] | list[tuple[Node, int]]:
         if self._weighted:
@@ -193,6 +203,7 @@ class Graph:
             adjacency[node] = neighbours
         self._nodes = [Node(i) for i in range(len(contents))]
         self._edges = adjacency
+        self._size = len(self._nodes)
         self._weighted = weighted
         self.__check_graph()
 
@@ -292,6 +303,7 @@ class LatticeGraph(Graph):
         self._cols = colcount
         self._nodes = sorted(list(node_dict.values()), key=lambda x: x.get_id())
         self._edges = [[x for adj in node.get_adjacent()] for node in self._nodes]
+        self._size = len(self._nodes)
 
     def to_file(self, path: Path) -> None:
         if type(path) == str:

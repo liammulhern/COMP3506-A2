@@ -45,6 +45,10 @@ class DoubleLinkedList(SingleLinkedList):
 
         node: DoubleNode = self.get_tail()
         self._tail = node.get_prev()
+
+        if self._tail is None:
+            self._head = None
+
         self._size -= 1
         return node
 

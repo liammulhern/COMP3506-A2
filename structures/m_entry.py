@@ -51,7 +51,7 @@ class Entry(Hashable):
         return self.get_key() < other.get_key()
 
     def __str__(self) -> str:
-        return f"({str(self.get_key())}: \"{str(self.get_value())}\")"
+        return f"[{str(self.get_key())}: {str(self.get_value())}]"
 
     def get_hash(self) -> int:
         """

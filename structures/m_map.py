@@ -48,13 +48,17 @@ class Map:
         self._MAD_a: int = randint(1, PRIME_NUMBER - 1)
         self._MAD_b: int = randint(0, PRIME_NUMBER - 1)
 
+    def __repr__(self) -> str:
+        return str(self)
+
     def __str__(self) -> str:
         """
         Get the printable string representation of the map
         """
         size: int = 0
-        str_out: str = f"Table Size: {self.get_size()}\n"
-        str_out += "-----------\n"
+        str_out: str = "{"
+
+        first_index = True 
 
         for i in range(self._capacity):
             if size == self._size:
@@ -65,19 +69,29 @@ class Map:
             if chain is None:
                 continue
 
+            if not first_index:
+                str_out += ", "
+            else:
+                first_index = False
+
             cur_node: SingleNode | None = chain.get_head() 
 
-            str_out += f"{i} -> ["
             # Iterate over chain and rehash each entry
+            first_entry = True
+
             while cur_node is not None:
+
+                if not first_entry:
+                    str_out += ", "
+                else:
+                    first_entry = False
+
                 cur_entry: Entry = cur_node.get_data()
-                str_out += f"{str(cur_entry)}, "
+                str_out += f"{str(cur_entry)}"
                 size += 1
                 cur_node = cur_node.get_next()
 
-            str_out += "]\n"
-
-        str_out += "----END----\n"
+        str_out += "}"
 
         return str_out
 
@@ -217,7 +231,13 @@ class Map:
             cur_node = cur_node.get_next()
 
         return value
-        
+
+    def exists(self, key: Any) -> bool:
+        """
+        Return true if a key exists in the map, false otherwise.
+        """
+        return self.find(key) is not None
+
     def __getitem__(self, key: Any) -> Any | None:
         """
         For convenience, you may wish to use this as an alternative

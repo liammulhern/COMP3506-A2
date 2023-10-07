@@ -20,6 +20,9 @@ class SingleNode:
         self._data = data  # This is the payload data of the node
         self._next = None  # This is the "next" pointer to the next SingleNode
 
+    def __repr__(self) -> str:
+        return str(self) 
+
     def __str__(self) -> str:
         return str(self._data)
 
@@ -43,6 +46,9 @@ class SingleLinkedList:
         self._head: SingleNode | None = None
         self._tail: SingleNode | None = None
         self._size = 0
+
+    def __repr__(self) -> str:
+        return str(self)
 
     def __str__(self) -> str:
         """
@@ -114,6 +120,10 @@ class SingleLinkedList:
             return None
         node = self.get_head()
         self._head = node.get_next()
+
+        if self._head is None:
+            self._tail = None
+
         self._size -= 1
         return node
 

@@ -12,11 +12,11 @@ from structures.m_doubly_linked_list import DoubleLinkedList
 from structures.m_doubly_linked_list import DoubleNode 
 
 class PriorityQueueNode(DoubleNode):
-    def __init__(self, priority: int, data: Any) -> None:
+    def __init__(self, priority: float, data: Any) -> None:
         self._priority = priority
         super().__init__(data)
 
-    def get_priority(self) -> int:
+    def get_priority(self) -> float:
         """
         Get the priority of a node.
         """
@@ -57,9 +57,12 @@ class PriorityQueue:
     def __str__(self) -> str:
         return str(self._list)
 
+    def __repr__(self) -> str:
+        return str(self) 
+
     # Warning: This insert() signature changed as of skeleton 1.1, previously
     # the priority and data arguments were switched
-    def insert(self, priority: int, data: Any) -> None:
+    def insert(self, priority: float, data: Any) -> None:
         """
         Insert some data to the queue with a given priority.
         Hint: FIFO queue can just always have the same priority value, no

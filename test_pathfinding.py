@@ -183,9 +183,48 @@ class MazeDraw:
         curses.echo()
         curses.endwin()
 
+def test_pathfinding():
+    graph_file = "data/4N/four.graph" 
+
+    my_graph = None
+    # Absolutely terrible
+    try:
+        my_graph = LatticeGraph()
+        my_graph.from_file(graph_file)
+    
+    except:
+        my_graph = None
+        try:
+            my_graph = Graph()
+            my_graph.from_file(graph_file)
+        except:
+            my_graph = None
+            pass
+
+    # Bail out if we couldn't read the graph
+    if my_graph is None:
+        print ("Could not read graph. Exiting...")
+        sys.exit(-1)
+
+    # Create start/end points
+    # origin = my_graph.generate_random_node_id()
+    origin = 6
+    # goal = my_graph.generate_random_node_id()
+    goal = 1
+    
+    path, visited = None, None
+
+    # path, visited = dfs_traversal(my_graph, origin, goal)
+    path, visited = greedy_traversal(my_graph, origin, goal)
+
+    print(path, visited)
+
+    exit(1)
 
 # The actual program we're running here
 if __name__ == "__main__":
+
+    # test_pathfinding()
 
     # Get and parse the command line arguments
     parser = argparse.ArgumentParser(description='COMP3506/7505 Assignment Two: Visual Pathfinding')
