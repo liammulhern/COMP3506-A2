@@ -8,13 +8,13 @@ from typing import Any
 
 from structures.m_util import Hashable
 
+HASH_SEED: int = 146816784
 
 class Entry(Hashable):
     """
     Implements a simple type that holds keys and values. Extends the Hashable
     type to ensure get_hash() is available/used for arbitrary key types.
     """
-  
     def __init__(self, key: Any, value: Any) -> None:
         """
         An entry has a key (used for comparing to other entries or for hashing)
@@ -50,17 +50,32 @@ class Entry(Hashable):
         """
         return self.get_key() < other.get_key()
 
+    def __str__(self) -> str:
+        return f"({str(self.get_key())}: \"{str(self.get_value())}\")"
+
     def get_hash(self) -> int:
-      """
-      Returns a hash of self._key - this hash function MUST be implemented if
-      you need to hash Entry types. In other words, do not use Python's magic
-      __hash__() function, but rather, you need to make your own. You are
-      welcome to use existing functions, but you need to implement it here
-      (and cite it in your report/statement file).
-      """
+        """
+        Returns a hash of self._key - this hash function MUST be implemented if
+        you need to hash Entry types. In other words, do not use Python's magic
+        __hash__() function, but rather, you need to make your own. You are
+        welcome to use existing functions, but you need to implement it here
+        (and cite it in your report/statement file).
+        """
+        # You may add helpers/additional functionality below if you wish
 
-    # You may add helpers/additional functionality below if you wish
+        if isinstance(self.get_key(), str):
+            data = bytes(self.get_key(), encoding='utf8')
+        else:
+            data = bytes(self.get_key())
 
+        seed = HASH_SEED
+
+        for i in range(len(data)):
+            seed ^= data[i]
+            seed = (seed * 0x5bd1e995) & 0xFFFFFFFF
+            seed ^= seed >> 15
+
+        return seed
 
 class Destination(Entry):
     """

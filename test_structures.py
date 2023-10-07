@@ -24,6 +24,7 @@ from structures.m_pqueue import PriorityQueue
 from structures.m_map import Map
 
 import tests.test_pqueue as pqueue_tests
+import tests.test_map as map_tests
 
 def test_pqueue() -> None:
     """
@@ -45,18 +46,18 @@ def test_map() -> None:
     This is not marked and is just here for you to test your code.
     """
     print ("==== Executing Map Tests ====")
-    my_map = Map()
-    # Make some entries
-    e1 = Entry(1, "value_for_key_1")
-    e2 = Entry(10, "value_for_key_10")
-    my_map.insert(e1)
-    my_map.insert(e2)
-    my_map.insert_kv(2, "Barry rules")
-    my_map[3] = "value_for_key_3"
-    assert (my_map.get_size() == 4)
-    ###
-    # DO RIGOROUS TESTING HERE!
-    ###
+
+    map_tests.test_empty_map()
+    map_tests.test_insert_size_increments()
+    map_tests.test_insert_multiple_entry_types()
+    map_tests.test_insert_same_key_replaces()
+    map_tests.test_insert_rehashes_on_capacity()
+    map_tests.test_find_returns_correct_value()
+    map_tests.test_find_no_key_returns_none()
+    map_tests.test_remove_no_key_no_changes()
+    map_tests.test_remove_key_removes_correct_key()
+    map_tests.test_remove_key_removes_all_correct_key()
+    map_tests.test_remove_key_decrements()
 
 def test_sort() -> None:
     """
@@ -78,13 +79,11 @@ def test_sort() -> None:
     ###
 
 def test_debug():
-    test_pqueue()
+    test_map()
     sys.exit()
 
 # The actual program we're running here
 if __name__ == "__main__":
-    test_debug()
-
     # Get and parse the command line arguments
     parser = argparse.ArgumentParser(description='COMP3506/7505 Assignment Two: Data Structure Tests')
 
@@ -97,7 +96,8 @@ if __name__ == "__main__":
     
     # No arguments passed
     if len(sys.argv) == 1:
-        parser.print_help()
+        parser.print_help() 
+        test_debug()
         sys.exit(-1)
 
     # Test each 
