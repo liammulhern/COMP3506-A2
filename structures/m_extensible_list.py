@@ -146,10 +146,55 @@ class ExtensibleList:
         return self._capacity
 
     def sort(self) -> None:
-      """
-      Sort elements inside _data based on < comparisons.
-      """
-      # IMPLEMENT ME!
-      pass
+        """
+        Sort elements inside _data based on < comparisons.
+        """
+        self._merge_divide(0, self.get_size() - 1)
 
+    def _merge_divide(self, start_index: int, end_index: int) -> None:
+        """
+        """
+        if start_index < end_index and (end_index - start_index) >= 1:
+            middle_index: int = (start_index + end_index) // 2
 
+            self._merge_divide(start_index, middle_index)
+            self._merge_divide(middle_index + 1, end_index)
+
+            self._merge_list(start_index, middle_index, end_index)
+
+    def _merge_list(
+            self,
+            start_index: int, 
+            middle_index: int, 
+            end_index: int
+        ) -> None:
+        """
+        """
+        left_index: int = start_index
+        right_index: int = middle_index + 1
+
+        current_sort_data: ExtensibleList = ExtensibleList()
+
+        while left_index <= middle_index and right_index <= end_index:
+            if self._data[left_index] < self._data[right_index]:
+                current_sort_data.append(self._data[left_index])
+                left_index += 1
+            else:
+                current_sort_data.append(self._data[right_index])
+                right_index += 1
+
+        while left_index <= middle_index:
+            current_sort_data.append(self._data[left_index])
+            left_index += 1
+
+        while right_index <= end_index:
+            current_sort_data.append(self._data[right_index])
+            right_index += 1
+
+        i = 0
+        j = start_index
+
+        while i < current_sort_data.get_size():
+            self._data[j] = current_sort_data[i]
+            j += 1
+            i += 1

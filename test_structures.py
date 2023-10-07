@@ -25,6 +25,7 @@ from structures.m_map import Map
 
 import tests.test_pqueue as pqueue_tests
 import tests.test_map as map_tests
+import tests.test_sort as sort_tests
 
 def test_pqueue() -> None:
     """
@@ -74,9 +75,12 @@ def test_sort() -> None:
     print("Before = ", my_list)
     my_list.sort()
     print("After = ", my_list)
-    ###
-    # DO RIGOROUS TESTING HERE!
-    ###
+
+    sort_tests.test_empty_list()
+    sort_tests.test_sorted_list()
+    sort_tests.test_reverse_sorted_list()
+    sort_tests.test_random_order_list()
+    sort_tests.test_duplicate_elements()
 
 def test_debug():
     test_map()
