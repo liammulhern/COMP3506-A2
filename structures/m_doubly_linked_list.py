@@ -82,6 +82,30 @@ class DoubleLinkedList(SingleLinkedList):
         prev.set_next(node)
         self._size += 1
 
+    def find_and_remove_element(self, elem: Any) -> Any | None:
+        cur: DoubleNode = self.get_head()
+
+        while cur is not None:
+            if elem != cur.get_data():
+                cur = cur.get_next()
+                continue
+
+            if cur == self.get_head():
+                return self.remove_from_front()
+            elif cur == self.get_tail():
+                return self.remove_from_back()
+
+            prev: DoubleNode = cur.get_prev()
+            next: DoubleNode = cur.get_next()
+
+            next.set_prev(prev)
+            prev.set_next(next)
+            self._size -= 1
+                
+            return cur.get_data()
+            
+        return None
+
     def is_empty(self) -> bool:
         """
         Check if the list is empty

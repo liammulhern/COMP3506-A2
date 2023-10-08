@@ -223,7 +223,7 @@ class Map:
 
         # Iterate over chain until matching key is found or end is reached
         while cur_node is not None:
-            cur_entry: Entry = cur_node.get_data()
+            cur_entry = cur_node.get_data()
 
             if cur_entry == dummy_entry:
                 value = cur_entry.get_value()
@@ -325,7 +325,7 @@ class Map:
             # Iterate over chain and rehash each entry
             while cur_node is not None:
                 cur_entry: Entry = cur_node.get_data()
-                items.append((cur_entry.get_key(), cur_entry.get_value()))
+                items.append(cur_entry)
                 size += 1
                 cur_node = cur_node.get_next()
 

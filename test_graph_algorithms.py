@@ -46,7 +46,8 @@ def test_bonanza(graph: Graph, budget_stopover: int, budget_money: int) -> None:
     """
     print ("==== Executing 4B ====")
     print ("B_s = ", budget_stopover, ", B_m = ", budget_money)
-    origin = my_graph.generate_random_node_id()
+    # origin = my_graph.generate_random_node_id()
+    origin = 0
     print ("Origin: ", origin)
     # sorted_candidates is an ExtensibleList of Destination types
     sorted_candidates = calculate_flight_budget(graph, origin, budget_stopover, budget_money)
@@ -89,9 +90,11 @@ def test_all_city(graph: Graph) -> None:
 def test_debug():
     my_graph = None
     my_graph = Graph()
-    my_graph.from_file("data/CUSTOM/test3.graph")
+    my_graph.from_file("data/CUSTOM/test5.graph")
+    # my_graph.from_file("data/POSW/two.graph")
 
-    test_hub_enumeration(my_graph, 3)
+    # test_hub_enumeration(my_graph, 0)
+    test_bonanza(my_graph, 2, 20)
 
 # The actual program we're running here
 if __name__ == "__main__":

@@ -11,10 +11,16 @@ from structures.m_entry import *
 from structures.m_doubly_linked_list import DoubleLinkedList 
 from structures.m_doubly_linked_list import DoubleNode 
 
-class PriorityQueueNode(DoubleNode):
+class PriorityNode():
     def __init__(self, priority: float, data: Any) -> None:
         self._priority = priority
-        super().__init__(data)
+        self._data = data
+
+    def get_data(self) -> Any:
+        """
+        Get the data of the node.
+        """
+        return self._data
 
     def get_priority(self) -> float:
         """
@@ -22,21 +28,27 @@ class PriorityQueueNode(DoubleNode):
         """
         return self._priority
     
-    def __lt__(self, node: 'PriorityQueueNode') -> bool:
+    def __lt__(self, node: 'PriorityNode') -> bool:
         """
         Compare if a node's priority is less than another.
         NOTE: 0 is the highest priority
         """
         return self._priority > node._priority
 
-    def __eq__(self, node: 'PriorityQueueNode') -> bool:
+    def __eq__(self, node: 'PriorityNode') -> bool:
         """
         Compare if a node has the same priority as another.
         """
-        return self._priority == node._priority
+        return self._priority == node._priority and self._data == node._data
+
+    def __gt__(self, node: 'PriorityNode') -> bool:
+        """
+        Compre if a node's priority is greater than another.
+        """
+        return self._priority < node._priority
 
     def __str__(self) -> str:
-        return f"{self._priority}:{self._data}" 
+        return f"{self._priority}:{self._data}"
 
 class PriorityQueue:
     """
@@ -68,13 +80,14 @@ class PriorityQueue:
         Hint: FIFO queue can just always have the same priority value, no
         need to implement an extra function.
         """
-        node: PriorityQueueNode = PriorityQueueNode(priority, data)
+        pq_node: PriorityNode = PriorityNode(priority, data)
+        node: DoubleNode = DoubleNode(pq_node)
 
         cur = self._list.get_head()
         has_inserted = False
 
         while cur is not None:
-            if node > cur:
+            if pq_node > cur.get_data():
                 self._list.insert_before(cur, node)
                 has_inserted = True
                 break
@@ -91,25 +104,69 @@ class PriorityQueue:
         insert_fifo() - they will either use one all of the time, or the
         other all of the time.
         """
-        node: PriorityQueueNode = PriorityQueueNode(0, data)
+        pq_node: PriorityNode = PriorityNode(0, data)
+        node: DoubleNode = DoubleNode(pq_node)
         self._list.insert_to_back(node)
 
     def get_min(self) -> Any:
         """
-        Return the highest priority value from the queue, but do not remove it
+        Return the highest priority value from the queue, but do not remove it.
         """
-        node: PriorityQueueNode = self._list.get_head()
+        node: DoubleNode = self._list.get_head()
+        pq_node: PriorityNode = node.get_data()
 
-        return node.get_data() 
+        return pq_node.get_data()
+    
+    def get_min_node(self) -> tuple[float, Any]:
+        """
+        Get the highest priority value from the queue.
+        Returns the priority and data as tuple.
+        """
+        node: DoubleNode = self._list.get_head()
+        pq_node: PriorityNode = node.get_data()
+
+        return (pq_node.get_priority(), pq_node.get_data())
         
     def remove_min(self) -> Any:
         """
         Extract (remove) the highest priority value from the queue.
         You must then maintain the queue to ensure priority order.
         """
-        node: PriorityQueueNode = self._list.remove_from_front()
+        node: DoubleNode = self._list.remove_from_front()
+        pq_node: PriorityNode = node.get_data()
 
-        return node.get_data()
+        return pq_node.get_data()
+
+    def remove_min_node(self) -> tuple[float, Any]:
+        """
+        Extract (remove) the highest priority value from the queue.
+        Returns the priority and data as tuple.
+        """
+        node: DoubleNode = self._list.remove_from_front()
+        pq_node: PriorityNode = node.get_data()
+
+        return (pq_node.get_priority(), pq_node.get_data())
+
+    def update(self, new_priority: float, old_priority: float, data: Any) -> None:
+        """
+        Update a priority node with new priority.
+        NOTE: Assumes (priority, data) is unique
+        """
+        self.remove(old_priority, data)
+        self.insert(new_priority, data)
+
+    def in_queue(self, priority: float, data: Any) -> bool:
+        """
+        Return true if priority node is in queue
+        NOTE: Assumes (priority, data) is unique
+        """
+        pq_node: PriorityNode = PriorityNode(priority, data)
+
+        return self._list.find_element(pq_node) is not None
+
+    def remove(self, priority: Any, data: Any) -> PriorityNode:
+        pq_node: PriorityNode = PriorityNode(priority, data)
+        self._list.find_and_remove_element(pq_node)
 
     def get_size(self) -> int:
         return self._list.get_size()

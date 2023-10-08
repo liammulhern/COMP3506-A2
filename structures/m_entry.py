@@ -53,6 +53,9 @@ class Entry(Hashable):
     def __str__(self) -> str:
         return f"[{str(self.get_key())}: {str(self.get_value())}]"
 
+    def __repr__(self) -> str:
+        return str(self)
+
     def get_hash(self) -> int:
         """
         Returns a hash of self._key - this hash function MUST be implemented if
@@ -85,7 +88,7 @@ class Destination(Entry):
     """
 
     def __init__(self, key: Any, value: Any, cost_money: int, cost_stopover: int) -> None:
-        super().__init__(key, value)
+        super().__init__(key, (cost_money, cost_stopover))
         self._cost_m = cost_money
         self._cost_s = cost_stopover
 
@@ -101,5 +104,18 @@ class Destination(Entry):
     def update_cost_stopover(self, ncs) -> None:
         self._cost_s = ncs
 
-    # You may add helpers/additional functionality below if you wish, and
-    # you may override inherited methods here if you wish
+    def __str__(self) -> str:
+        return f"[{str(self._key)}: ({self._cost_m}, {self._cost_s})]"
+
+    def __lt__(self, other: 'Destination') -> bool:
+        if self._cost_m < other._cost_m:
+            return True
+
+        if self._cost_m == other._cost_m:
+            if self._cost_s < other._cost_s:
+                return True
+            
+            if self._cost_s == other._cost_s:
+                return self._key < other._key
+        
+        return False
