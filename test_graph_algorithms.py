@@ -46,8 +46,7 @@ def test_bonanza(graph: Graph, budget_stopover: int, budget_money: int) -> None:
     """
     print ("==== Executing 4B ====")
     print ("B_s = ", budget_stopover, ", B_m = ", budget_money)
-    # origin = my_graph.generate_random_node_id()
-    origin = 0
+    origin = my_graph.generate_random_node_id()
     print ("Origin: ", origin)
     # sorted_candidates is an ExtensibleList of Destination types
     sorted_candidates = calculate_flight_budget(graph, origin, budget_stopover, budget_money)

@@ -229,8 +229,43 @@ def maintenance_optimisation(graph: Graph, origin: int) -> ExtensibleList:
       Please use the Entry type here, with the key being the node identifier,
       and the value being the cost.
     """
-    pass
+    budget_costs: Map = Map()
+    visited_ids: Set = Set()
 
+    budget_costs[origin] = 0
+
+    queue: PriorityQueue = PriorityQueue()
+    queue.insert(0, origin)
+
+    while not queue.is_empty():
+        monetary_cost, current_node_id = queue.remove_min_node()
+
+        if visited_ids.exists(current_node_id):
+            continue
+
+        visited_ids.add(current_node_id)
+
+        neighbour_nodes: list[Node] = graph.get_neighbours(current_node_id)
+        neighbour_nodes_size: int = len(neighbour_nodes)
+
+        for i in range(neighbour_nodes_size):
+            neighbour_node, neighbour_node_cost = neighbour_nodes[i]
+            neighbour_node_id = neighbour_node.get_id()
+
+            new_monetary_cost: int = monetary_cost + neighbour_node_cost
+
+            if budget_costs[neighbour_node_id] is None \
+                    or new_monetary_cost < budget_costs[neighbour_node_id]:
+                
+                budget_costs[neighbour_node_id] = new_monetary_cost
+
+                queue.insert(new_monetary_cost, neighbour_node_id)
+        
+    budget_costs.remove(origin)
+    budget_costs_sorted = budget_costs.get_items()
+    budget_costs_sorted.sort()
+
+    return budget_costs_sorted
 
 def all_city_logistics(graph: Graph) -> Map:
     """
