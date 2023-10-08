@@ -63,7 +63,7 @@ def dfs_traversal(
     visited_order = ExtensibleList()
 
     stack: Stack = Stack()
-    visited_map: Map = Map()
+    previous_nodes: Map = Map()
     visited_ids: Set = Set()
 
     stack.push(origin)
@@ -73,7 +73,7 @@ def dfs_traversal(
 
         if current_node_id == goal:
             visited_order.append(current_node_id)
-            path = get_traversal_path(goal, visited_map)
+            path = get_traversal_path(goal, previous_nodes)
             return (path, visited_order)
 
         # If a node has not been visited... visit it 
@@ -88,19 +88,19 @@ def dfs_traversal(
             neighbour_node_id: Node = neighbour_nodes[i].get_id()
 
             if not visited_ids.exists(neighbour_node_id):
-                visited_map[neighbour_node_id] = current_node_id
+                previous_nodes[neighbour_node_id] = current_node_id
                 stack.push(neighbour_node_id)
 
     # If you couldn't get to the goal, you should return like this
     return (TraversalFailure.DISCONNECTED, visited_order)
 
-def get_traversal_path(goal: int, visited_map: Map) -> ExtensibleList:
+def get_traversal_path(goal: int, previous_nodes: Map) -> ExtensibleList:
     current_id: int = goal 
     path = ExtensibleList()
 
     while current_id is not None:
         path.append(current_id)
-        current_id = visited_map[current_id]
+        current_id = previous_nodes[current_id]
 
     path.reverse() 
 
@@ -130,7 +130,7 @@ def bfs_traversal(
     visited_order = ExtensibleList()
 
     queue: PriorityQueue = PriorityQueue() 
-    visited_map: Map = Map()
+    previous_nodes: Map = Map()
     visited_ids: Set = Set()
 
     queue.insert_fifo(origin)
@@ -139,7 +139,7 @@ def bfs_traversal(
         current_node_id: int = queue.remove_min()
 
         if current_node_id == goal:
-            path = get_traversal_path(goal, visited_map)
+            path = get_traversal_path(goal, previous_nodes)
             visited_order.append(current_node_id)
             return (path, visited_order)
 
@@ -154,7 +154,7 @@ def bfs_traversal(
                 neighbour_node_id: Node = neighbour_nodes[i].get_id()
 
                 if not visited_ids.exists(neighbour_node_id):
-                    visited_map[neighbour_node_id] = current_node_id
+                    previous_nodes[neighbour_node_id] = current_node_id
                     queue.insert_fifo(neighbour_node_id)
 
     # If you couldn't get to the goal, you should return like this
@@ -184,7 +184,7 @@ def greedy_traversal(
     visited_order = ExtensibleList()
 
     queue: PriorityQueue = PriorityQueue() 
-    visited_map: Map = Map()
+    previous_nodes: Map = Map()
     visited_ids: Set = Set()
 
     queue.insert(0, origin)
@@ -196,7 +196,7 @@ def greedy_traversal(
         current_node_id: int = queue.remove_min()
 
         if current_node_id == goal:
-            path = get_traversal_path(goal, visited_map)
+            path = get_traversal_path(goal, previous_nodes)
             visited_order.append(current_node_id)
             return (path, visited_order)
 
@@ -211,7 +211,7 @@ def greedy_traversal(
                 neighbour_node_id: Node = neighbour_nodes[i].get_id()
 
                 if not visited_ids.exists(neighbour_node_id):
-                    visited_map[neighbour_node_id] = current_node_id
+                    previous_nodes[neighbour_node_id] = current_node_id
                     neighbour_node: LatticeNode = graph.get_node(neighbour_node_id)
                     neighbour_node_position: tuple[int, int] = neighbour_node.get_coordinates()
 

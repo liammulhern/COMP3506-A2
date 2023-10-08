@@ -18,6 +18,12 @@ class Stack:
     def __init__(self) -> None:
         self._data = ExtensibleList()
 
+    def __str__(self) -> str:
+        return str(self._data) 
+
+    def __repr__(self) -> str:
+        return str(self) 
+
     def push(self, elem: Any) -> None:
         """
         Push some data `elem` onto the stack

@@ -86,9 +86,17 @@ def test_all_city(graph: Graph) -> None:
         cost = query_map.find(key)
         print ("Cost from ", node_a, " to ", node_b, " with key ", key ," is = ", cost)
 
+def test_debug():
+    my_graph = None
+    my_graph = Graph()
+    my_graph.from_file("data/CUSTOM/test3.graph")
+
+    test_hub_enumeration(my_graph, 3)
 
 # The actual program we're running here
 if __name__ == "__main__":
+    
+    # test_debug()
 
     # Get and parse the command line arguments
     parser = argparse.ArgumentParser(description='COMP3506/7505 Assignment Two: Bogan Airlines')

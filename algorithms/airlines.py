@@ -7,10 +7,12 @@ NOTE: This file will be used for marking.
 
 from structures.m_entry import Entry
 from structures.m_extensible_list import ExtensibleList
-from structures.m_graph import Graph
+from structures.m_graph import Graph, Node
 from structures.m_map import Map
+from structures.m_set import Set
 from structures.m_pqueue import PriorityQueue
 from structures.m_stack import Stack
+from structures.m_single_linked_list import SingleLinkedList, SingleNode
 from structures.m_util import Hashable, TraversalFailure
 
 
@@ -24,9 +26,38 @@ def has_cycles(graph: Graph) -> bool:
     @returns: bool
       Whether or not the graph contains cycles
     """
+    stack: Stack = Stack()
+    visited_ids: Set = Set()
+    previous_node: Map = Map()
 
-    pass
+    # Iterate over all nodes in the graph 
+    for i in range(graph.get_size()):
+        origin_node: Node = graph.get_node(i)
+        origin_node_id: int = origin_node.get_id()
 
+        if not visited_ids.exists(origin_node_id):
+            stack.push(origin_node_id)
+            previous_node[origin_node_id] = None
+
+            # Complete DFS for iterated origin node
+            while not stack.is_empty():
+                current_node_id = stack.pop()
+                visited_ids.add(current_node_id)
+
+                neighbour_nodes: list[Node] = graph.get_neighbours(current_node_id)
+                neighbour_nodes_size: int = len(neighbour_nodes)
+
+                for j in range(neighbour_nodes_size):
+                    neighbour_node_id: Node = neighbour_nodes[j].get_id()
+
+                    if not visited_ids.exists(neighbour_node_id):
+                        previous_node[neighbour_node_id] = current_node_id
+                        stack.push(neighbour_node_id)
+                    elif previous_node[current_node_id] != neighbour_node_id:
+                        # If the neighbour node has neen visited and
+                        # the previously visited node of the current node is not a
+                        # neighbour then a cycle has been found
+                        return True
 
 def enumerate_hubs(graph: Graph, min_degree: int) -> ExtensibleList:
     """
@@ -41,9 +72,102 @@ def enumerate_hubs(graph: Graph, min_degree: int) -> ExtensibleList:
       A list of all Node IDs corresponding to the largest subgraph
       where each vertex has a degree of at least min_degree.
     """
+    subgraphs: SingleLinkedList = _find_subgraphs_of_degrees(graph, min_degree)
 
-    pass
+    cur_node: SingleNode = subgraphs.get_head()
+    largest_subgraph_size: int = 0
+    largest_subgraph: ExtensibleList = ExtensibleList()
 
+    while cur_node is not None:
+        subgraph: ExtensibleList = cur_node.get_data()
+
+        if subgraph.get_size() > largest_subgraph_size:
+            largest_subgraph_size = subgraph.get_size()
+            largest_subgraph = subgraph
+
+        cur_node = cur_node.get_next()
+
+    largest_subgraph.sort()
+
+    return largest_subgraph
+
+def _find_subgraphs_of_degrees(graph: Graph, min_degree: int) -> SingleLinkedList:
+    """
+    Process:
+        1. Find degree of all nodes in graph.
+        2. If a node has degree less than the minimum, remove it from the graph.
+        3. Recalculate neighbour degrees of removed node, if they are now below 
+        the minimum degree remove them from graph.
+        4. Repeat 3.
+    """
+    stack: Stack = Stack()
+    visited_ids: Set = Set()
+    subgraphs: SingleLinkedList = SingleLinkedList()
+
+    # Iterate over all nodes in the graph 
+    for i in range(graph.get_size()):
+        if visited_ids.get_size() == graph.get_size():
+            break
+
+        origin_node: Node = graph.get_node(i)
+        origin_node_id: int = origin_node.get_id()
+
+        if not visited_ids.exists(origin_node_id):
+            visited_order: ExtensibleList = ExtensibleList()
+            stack.push(origin_node_id)
+
+            # Complete DFS for iterated origin node
+            while not stack.is_empty():
+                current_node_id = stack.pop()
+
+                neighbour_nodes: list[Node] = graph.get_neighbours(current_node_id)
+                neighbour_nodes_size: int = len(neighbour_nodes)
+
+                # If a node has not been visited... visit it 
+                if not visited_ids.exists(current_node_id):
+                    visited_ids.add(current_node_id) 
+
+                    if neighbour_nodes_size < min_degree:
+                        graph.remove_node(current_node_id)
+                        _update_neighbour_node_degree(graph, neighbour_nodes, visited_order, min_degree)
+                        continue
+                    else:
+                        visited_order.append(current_node_id)
+                else:
+                    continue
+
+                for j in range(neighbour_nodes_size):
+                    neighbour_node_id: Node = neighbour_nodes[j].get_id()
+
+                    if not visited_ids.exists(neighbour_node_id):
+                        stack.push(neighbour_node_id)
+
+            subgraphs.insert_to_front(SingleNode(visited_order))
+    
+    return subgraphs
+
+def _update_neighbour_node_degree(
+        graph: Graph, 
+        neighbour_nodes: list[Node], 
+        visited_order: ExtensibleList,
+        min_degree: int
+    ) -> None:
+    """
+    """
+    neighbour_nodes_size: int = len(neighbour_nodes)
+
+    for i in range(neighbour_nodes_size):
+        current_node_id: Node = neighbour_nodes[i].get_id()
+        current_neighbour_nodes: list[Node] = graph.get_neighbours(current_node_id)
+        current_neighbour_nodes_size: int = len(current_neighbour_nodes)
+
+        if current_neighbour_nodes_size == 0:
+            continue
+
+        if current_neighbour_nodes_size < min_degree:
+            graph.remove_node(current_node_id)
+            visited_order.remove(current_node_id)
+            _update_neighbour_node_degree(graph, current_neighbour_nodes, visited_order, min_degree)
 
 def calculate_flight_budget(graph: Graph, origin: int, stopover_budget: int, monetary_budget: int) -> ExtensibleList:
     """

@@ -159,6 +159,60 @@ class Graph:
     def get_size(self) -> int:
         return self._size
 
+    def remove_node(self, index: int) -> None:
+        """
+        Remove a node and update the edge table.
+        """
+        neighbours: list[Node] = self.get_neighbours(index)
+        neighbours_size: int = len(neighbours)
+
+        for i in range(neighbours_size):
+            neighbour_node_id: int = neighbours[i].get_id()
+
+            old_edges = self._edges[neighbour_node_id]
+            new_edges = self._array_remove(old_edges, index)
+
+            self._edges[neighbour_node_id] = new_edges
+
+        self._edges[index] = []
+
+    def _array_remove(self, array: list[Any], remove: Any) -> list[Any]:
+        """
+        Remove element from array and return new array
+        """
+        old_array_size = len(array)
+
+        new_array = [None] * (old_array_size - 1)
+
+        j: int = 0
+        for i in range(old_array_size):
+            id, _ = array[i]
+            if id == remove:
+                continue
+
+            new_array[j] = array[i]
+            j += 1
+
+        return new_array
+
+    def _array_remove_at(self, array: list[Any], index: int) -> list[Any]:
+        """
+        Remove element at index from array and return new array.
+        """
+        old_array_size = len(array)
+
+        new_array = [None] * (old_array_size - 1)
+
+        j: int = 0
+        for i in range(old_array_size):
+            if i == index:
+                continue
+
+            new_array[j] = array[i]
+            j += 1
+
+        return new_array
+
     def get_neighbours(self, index: int) -> list[Node] | list[tuple[Node, int]]:
         if self._weighted:
             return [(self._nodes[neighbour], weight) for neighbour, weight in self._edges[index]]

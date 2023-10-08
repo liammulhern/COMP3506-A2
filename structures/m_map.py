@@ -25,6 +25,7 @@ from random import randint
 from structures.m_entry import Entry
 from structures.m_single_linked_list import SingleLinkedList
 from structures.m_single_linked_list import SingleNode
+from structures.m_extensible_list import ExtensibleList
 
 INITIAL_CAPACITY: int = 8
 LOAD_FACTOR_REHASH: float = 2/3
@@ -250,6 +251,85 @@ class Map:
 
     def is_empty(self) -> bool:
         return self._size == 0
+
+    def get_keys(self) -> ExtensibleList:
+        """
+        Get all map keys as an extensible list 
+        """ 
+        size: int = 0
+        keys: ExtensibleList = ExtensibleList() 
+
+
+        for i in range(self._capacity):
+            if size == self._size:
+                break
+
+            chain: SingleLinkedList | None = self._entry_array[i]
+            
+            if chain is None:
+                continue
+
+            cur_node: SingleNode | None = chain.get_head() 
+
+            # Iterate over chain and rehash each entry
+            while cur_node is not None:
+                cur_entry: Entry = cur_node.get_data()
+                keys.append(cur_entry.get_key())
+                size += 1
+                cur_node = cur_node.get_next()
+
+        return keys
+
+    def get_values(self) -> ExtensibleList:
+        """
+        Get all map values as an extensible list
+        """
+        size: int = 0
+        values: ExtensibleList = ExtensibleList() 
+
+        for i in range(self._capacity):
+            if size == self._size:
+                break
+
+            chain: SingleLinkedList | None = self._entry_array[i]
+            
+            if chain is None:
+                continue
+
+            cur_node: SingleNode | None = chain.get_head() 
+
+            # Iterate over chain and rehash each entry
+            while cur_node is not None:
+                cur_entry: Entry = cur_node.get_data()
+                values.append(cur_entry.get_value())
+                size += 1
+                cur_node = cur_node.get_next()
+
+        return values
+
+    def get_items(self) -> ExtensibleList:
+        size: int = 0
+        items: ExtensibleList = ExtensibleList() 
+
+        for i in range(self._capacity):
+            if size == self._size:
+                break
+
+            chain: SingleLinkedList | None = self._entry_array[i]
+            
+            if chain is None:
+                continue
+
+            cur_node: SingleNode | None = chain.get_head() 
+
+            # Iterate over chain and rehash each entry
+            while cur_node is not None:
+                cur_entry: Entry = cur_node.get_data()
+                items.append((cur_entry.get_key(), cur_entry.get_value()))
+                size += 1
+                cur_node = cur_node.get_next()
+
+        return items
 
     def _get_hash_index(self, entry: Entry) -> int:
         """
