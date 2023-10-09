@@ -25,6 +25,8 @@ from random import randint
 from structures.m_entry import Entry
 from structures.m_single_linked_list import SingleLinkedList
 from structures.m_single_linked_list import SingleNode
+from structures.m_doubly_linked_list import DoubleLinkedList
+from structures.m_doubly_linked_list import DoubleNode
 from structures.m_extensible_list import ExtensibleList
 
 INITIAL_CAPACITY: int = 8

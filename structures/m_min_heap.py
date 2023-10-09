@@ -3,23 +3,53 @@ from structures.m_extensible_list import ExtensibleList
 from typing import Any
 
 class MinHeapNode:
-    def __init__(self, key: Any, data: Any) -> None:
+    def __init__(self, key: Any, data: Any, order: int = 0) -> None:
         self._key = key
         self._data = data
+        self._order = order
+
+    def get_data(self) -> Any:
+        return self._data
+
+    def get_key(self) -> Any:
+        return self._key
+
+    def __str__(self) -> str:
+        return f"{self._key}: {self._data}" 
+
+    def __repr__(self) -> str:
+        return str(self) 
 
     def __lt__(self, other: 'MinHeapNode') -> bool:
+        if self._key == other._key:
+            return self._order < other._order
+
         return self._key < other._key
+ 
+    def __le__(self, other: 'MinHeapNode') -> bool:
+        return self.__lt__(other)
     
     def __eq__(self, other: 'MinHeapNode') -> bool:
         return self._key == other._key
 
     def __gt__(self, other: 'MinHeapNode') -> bool:
-        return self._key > other._key
-    
+        if self._key == other._key:
+            return self._order > other._order
 
+        return self._key > other._key
+
+    def __ge__(self, other: 'MinHeapNode') -> bool:
+        return self.__gt__(other)
+    
 class MinHeap:
     def __init__(self) -> None:
         self._list = ExtensibleList()
+
+    def __str__(self) -> str:
+        return str(self._list)
+
+    def __repr__(self) -> str:
+        return str(self)
 
     def get_min(self) -> Any | None:
         if self.is_empty():
@@ -28,7 +58,7 @@ class MinHeap:
         return self._list[0]
 
     def insert(self, key: Any, data: Any) -> None:
-        node: MinHeapNode = MinHeapNode(key, data)
+        node: MinHeapNode = MinHeapNode(key, data, self._list.get_size())
 
         self._list.append(node)
         self._up_heap()
@@ -39,14 +69,16 @@ class MinHeap:
 
         size: int = self._list.get_size()
 
+        min_node: MinHeapNode = self._list[0]
+
         # Replace the root with the last node
         self._list[0] = self._list[size - 1]
 
         # Remove the last node
-        node: MinHeapNode = self._list.remove_at(size - 1)
+        self._list.remove_at(size - 1)
         self._down_heap(0)
 
-        return node
+        return min_node
 
     def _up_heap(self) -> None:
         current_index: int = self.get_size() - 1
@@ -88,7 +120,7 @@ class MinHeap:
             current_node = self._list[current_index]
             least_node = self._list[least_index]
 
-            if current_node < least_node:
+            if current_node > least_node:
                 self._swap_nodes(current_index, least_index)
                 current_index = least_index
             else:

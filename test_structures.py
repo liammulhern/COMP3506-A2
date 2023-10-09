@@ -35,8 +35,8 @@ def test_pqueue() -> None:
     print ("==== Executing Priority Queue Tests ====")
 
     pqueue_tests.test_empty_priority_queue()
-    pqueue_tests.test_insert_and_remove_highest_priority()
     pqueue_tests.test_insert_and_get_highest_priority()
+    pqueue_tests.test_insert_and_remove_highest_priority()
     pqueue_tests.test_insert_and_get_multiple_times()
     pqueue_tests.test_insert_same_priority()
     pqueue_tests.test_insert_same_priority_and_remove_multiple_times()
@@ -84,7 +84,8 @@ def test_sort() -> None:
     sort_tests.test_duplicate_elements()
 
 def test_debug():
-    test_pqueue()
+    # test_pqueue()
+    map_tests.test_insert_remove_multiple()
     sys.exit()
 
 # The actual program we're running here

@@ -1,6 +1,8 @@
 from structures.m_map import Map, LOAD_FACTOR_REHASH
 from structures.m_entry import Entry
 
+import random
+
 def test_empty_map() -> None:
     print("TESTING: test_empty_map()")
 
@@ -234,3 +236,51 @@ def test_remove_key_decrements() -> None:
     assert(map.get_size() == 0)
 
     print(map)
+
+def test_insert_remove_multiple() -> None:
+    print("TESTING: test_insert_remove_multiple()")
+    map = Map()
+    expected_map = {}
+    size: int = 0
+    insertions: int = 0
+    removals: int = 0
+    finds: int = 0
+
+    random.seed(123)
+
+    for i in range(10000):
+        map_type = random.randint(0, 2)
+
+        key = random.randint(0, 10000)
+
+        if map_type == 0:
+            data = random.randint(0, 1000)
+
+            if not map.exists(key):
+                size += 1
+
+            map[key] = data
+            expected_map[key] = data
+
+            insertions += 1
+        elif map_type == 1:
+            data_1 = map[key]
+            map.remove(key)
+            data_2 = expected_map.pop(key, None)
+
+            assert(data_1 == data_2)
+
+            if data_1 is not None:
+                removals += 1
+                if size > 0:
+                    size -= 1
+
+        elif map_type == 2:
+            assert(map.find(key) == expected_map.get(key, None))
+            finds += 1
+
+        assert(len(expected_map) == size)
+        assert(size == map.get_size())
+
+    print(f"After {i} iterations:\nInsertions: {insertions}\nRemovals: {removals}\nFinds: {finds}\nExpected size: {size}\nActual size: {map.get_size()}")
+
