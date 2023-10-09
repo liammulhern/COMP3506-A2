@@ -40,6 +40,7 @@ def test_pqueue() -> None:
     pqueue_tests.test_insert_and_get_multiple_times()
     pqueue_tests.test_insert_same_priority()
     pqueue_tests.test_insert_same_priority_and_remove_multiple_times()
+    pqueue_tests.test_insert_remove_multiple()
 
 def test_map() -> None:
     """
@@ -83,7 +84,7 @@ def test_sort() -> None:
     sort_tests.test_duplicate_elements()
 
 def test_debug():
-    test_map()
+    test_pqueue()
     sys.exit()
 
 # The actual program we're running here

@@ -1,4 +1,5 @@
 from structures.m_pqueue import PriorityQueue
+import random
 
 # REF: ChatGPT generated code modified to fit data structure
 # PROMPT: "Write unit tests for a priority queue ADT"
@@ -128,3 +129,34 @@ def test_insert_same_priority_and_remove_multiple_times() -> None:
     assert(pq.is_empty() == True)
 
     print(pq)
+
+def test_insert_remove_multiple() -> None:
+    print("TESTING: test_insert_remove_multiple()")
+    pq = PriorityQueue()
+    size: int = 0
+    insertions: int = 0
+    removals: int = 0
+
+    random.seed = 123
+
+    for i in range(100000):
+        insert_or_remove = random.randint(0, 2)
+
+        if insert_or_remove:
+            priority = random.randint(0, 1000)
+            data = random.randint(0, 1000)
+
+            pq.insert(priority, data)
+            insertions += 1
+
+            size += 1
+        else:
+            data = pq.remove_min()
+            removals += 1
+
+            if size > 0:
+                size -= 1
+
+        assert(size == pq.get_size())
+
+    print(f"After {i} iterations:\nInsertions: {insertions}\nRemovals: {removals}\nExpected size: {size}\nActual size: {pq.get_size()}")

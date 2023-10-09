@@ -108,65 +108,60 @@ class PriorityQueue:
         node: DoubleNode = DoubleNode(pq_node)
         self._list.insert_to_back(node)
 
-    def get_min(self) -> Any:
+    def get_min(self) -> Any | None:
         """
         Return the highest priority value from the queue, but do not remove it.
         """
         node: DoubleNode = self._list.get_head()
+
+        if node is None:
+            return (None, None)
+
         pq_node: PriorityNode = node.get_data()
 
         return pq_node.get_data()
     
-    def get_min_node(self) -> tuple[float, Any]:
+    def get_min_node(self) -> tuple[float | None, Any | None]:
         """
         Get the highest priority value from the queue.
         Returns the priority and data as tuple.
         """
         node: DoubleNode = self._list.get_head()
+
+        if node is None:
+            return (None, None)
+
         pq_node: PriorityNode = node.get_data()
 
         return (pq_node.get_priority(), pq_node.get_data())
         
-    def remove_min(self) -> Any:
+    def remove_min(self) -> Any | None:
         """
         Extract (remove) the highest priority value from the queue.
         You must then maintain the queue to ensure priority order.
         """
         node: DoubleNode = self._list.remove_from_front()
+
+        if node is None:
+            return None
+
         pq_node: PriorityNode = node.get_data()
 
         return pq_node.get_data()
 
-    def remove_min_node(self) -> tuple[float, Any]:
+    def remove_min_node(self) -> tuple[float | None, Any | None]:
         """
         Extract (remove) the highest priority value from the queue.
         Returns the priority and data as tuple.
         """
         node: DoubleNode = self._list.remove_from_front()
+
+        if node is None:
+            return (None, None)
+
         pq_node: PriorityNode = node.get_data()
 
         return (pq_node.get_priority(), pq_node.get_data())
-
-    def update(self, new_priority: float, old_priority: float, data: Any) -> None:
-        """
-        Update a priority node with new priority.
-        NOTE: Assumes (priority, data) is unique
-        """
-        self.remove(old_priority, data)
-        self.insert(new_priority, data)
-
-    def in_queue(self, priority: float, data: Any) -> bool:
-        """
-        Return true if priority node is in queue
-        NOTE: Assumes (priority, data) is unique
-        """
-        pq_node: PriorityNode = PriorityNode(priority, data)
-
-        return self._list.find_element(pq_node) is not None
-
-    def remove(self, priority: Any, data: Any) -> PriorityNode:
-        pq_node: PriorityNode = PriorityNode(priority, data)
-        self._list.find_and_remove_element(pq_node)
 
     def get_size(self) -> int:
         return self._list.get_size()
