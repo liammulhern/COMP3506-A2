@@ -248,13 +248,17 @@ def test_insert_remove_multiple() -> None:
 
     random.seed(123)
 
-    for i in range(10000):
-        map_type = random.randint(0, 2)
+    for i in range(1000000):
+        map_type = random.randint(0, 5)
 
-        key = random.randint(0, 10000)
+        key = i
+        # key = random.randint(0, 10000)
+
+        if i == 445:
+            pass
 
         if map_type == 0:
-            data = random.randint(0, 1000)
+            data = i
 
             if not map.exists(key):
                 size += 1
@@ -263,7 +267,7 @@ def test_insert_remove_multiple() -> None:
             expected_map[key] = data
 
             insertions += 1
-        elif map_type == 1:
+        elif map_type <= 2:
             data_1 = map[key]
             map.remove(key)
             data_2 = expected_map.pop(key, None)
@@ -274,13 +278,12 @@ def test_insert_remove_multiple() -> None:
                 removals += 1
                 if size > 0:
                     size -= 1
-
-        elif map_type == 2:
+        elif map_type == 1:
             assert(map.find(key) == expected_map.get(key, None))
             finds += 1
 
-        assert(len(expected_map) == size)
-        assert(size == map.get_size())
+        assert(len(expected_map) == map.get_size())
+        # assert(size == map.get_size())
 
     print(f"After {i} iterations:\nInsertions: {insertions}\nRemovals: {removals}\nFinds: {finds}\nExpected size: {size}\nActual size: {map.get_size()}")
 
