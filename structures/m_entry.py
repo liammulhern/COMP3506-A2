@@ -9,6 +9,7 @@ from typing import Any
 from structures.m_util import Hashable
 
 HASH_SEED: int = 146816784
+MAX_HASH_ITERATIONS: int = 10
 
 class Entry(Hashable):
     """
@@ -65,17 +66,15 @@ class Entry(Hashable):
         (and cite it in your report/statement file).
         """
         # You may add helpers/additional functionality below if you wish
-
-        if isinstance(self.get_key(), str):
-            data = bytes(self.get_key(), encoding='utf8')
-        else:
-            data = bytes(self.get_key())
+        data = str(self.get_key())
 
         seed = HASH_SEED
+        
+        hash_iterations: int = len(data)
 
-        for i in range(len(data)):
-            seed ^= data[i]
-            seed = (seed * 0x5bd1e995) & 0xFFFFFFFF
+        for i in range(hash_iterations):
+            seed ^= ord(data[i])
+            seed *= 0x5bd1e995
             seed ^= seed >> 15
 
         return seed
@@ -108,6 +107,9 @@ class Destination(Entry):
         return f"[{str(self._key)}: ({self._cost_m}, {self._cost_s})]"
 
     def __lt__(self, other: 'Destination') -> bool:
+        if other.get_key() is None:
+            return True
+
         if self._cost_m < other._cost_m:
             return True
 

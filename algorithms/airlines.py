@@ -5,15 +5,15 @@ The University of Queensland
 NOTE: This file will be used for marking.
 """
 
-from structures.m_entry import Entry, Destination
+from structures.m_entry import Destination
 from structures.m_extensible_list import ExtensibleList
 from structures.m_graph import Graph, Node
 from structures.m_map import Map
 from structures.m_set import Set
 from structures.m_pqueue import PriorityQueue
 from structures.m_stack import Stack
-from structures.m_single_linked_list import SingleLinkedList, SingleNode
-from structures.m_util import Hashable, TraversalFailure
+from structures.m_single_linked_list import SingleLinkedList
+
 
 def has_cycles(graph: Graph) -> bool:
     """
@@ -29,7 +29,7 @@ def has_cycles(graph: Graph) -> bool:
     visited_ids: Set = Set()
     previous_node: Map = Map()
 
-    # Iterate over all nodes in the graph 
+    # Iterate over all nodes in the graph
     for i in range(graph.get_size()):
         origin_node: Node = graph.get_node(i)
         origin_node_id: int = origin_node.get_id()
@@ -58,6 +58,7 @@ def has_cycles(graph: Graph) -> bool:
                         # neighbour then a cycle has been found
                         return True
 
+
 def enumerate_hubs(graph: Graph, min_degree: int) -> ExtensibleList:
     """
     Task 3.2: Hub enumeration
@@ -77,12 +78,13 @@ def enumerate_hubs(graph: Graph, min_degree: int) -> ExtensibleList:
 
     return largest_subgraph
 
+
 def _find_subgraphs_of_degree(graph: Graph, min_degree: int) -> SingleLinkedList:
     """
     Process:
         1. Find degree of all nodes in graph.
         2. If a node has degree less than the minimum, remove it from the graph.
-        3. Recalculate neighbour degrees of removed node, if they are now below 
+        3. Recalculate neighbour degrees of removed node, if they are now below
         the minimum degree remove them from graph.
         4. Repeat 3.
     """
@@ -90,7 +92,7 @@ def _find_subgraphs_of_degree(graph: Graph, min_degree: int) -> SingleLinkedList
     visited_ids: Set = Set()
     visited_order: ExtensibleList = ExtensibleList()
 
-    # Iterate over all nodes in the graph 
+    # Iterate over all nodes in the graph
     for i in range(graph.get_size()):
         if visited_ids.get_size() == graph.get_size():
             break
@@ -109,9 +111,9 @@ def _find_subgraphs_of_degree(graph: Graph, min_degree: int) -> SingleLinkedList
                 neighbour_nodes: list[Node] = graph.get_neighbours(current_node_id)
                 neighbour_nodes_size: int = len(neighbour_nodes)
 
-                # If a node has not been visited... visit it 
+                # If a node has not been visited... visit it
                 if not visited_ids.exists(current_node_id):
-                    visited_ids.add(current_node_id) 
+                    visited_ids.add(current_node_id)
 
                     if neighbour_nodes_size < min_degree:
                         graph.remove_node(current_node_id)
@@ -128,14 +130,10 @@ def _find_subgraphs_of_degree(graph: Graph, min_degree: int) -> SingleLinkedList
                     if not visited_ids.exists(neighbour_node_id):
                         stack.push(neighbour_node_id)
 
-    return visited_order 
+    return visited_order
 
-def _update_neighbour_node_degree(
-        graph: Graph, 
-        neighbour_nodes: list[Node], 
-        visited_order: ExtensibleList,
-        min_degree: int
-    ) -> None:
+
+def _update_neighbour_node_degree(graph: Graph, neighbour_nodes: list[Node], visited_order: ExtensibleList, min_degree: int) -> None:
     """
     """
     neighbour_nodes_size: int = len(neighbour_nodes)
@@ -152,6 +150,7 @@ def _update_neighbour_node_degree(
             graph.remove_node(current_node_id)
             visited_order.remove(current_node_id)
             _update_neighbour_node_degree(graph, current_neighbour_nodes, visited_order, min_degree)
+
 
 def calculate_flight_budget(graph: Graph, origin: int, stopover_budget: int, monetary_budget: int) -> ExtensibleList:
     """
@@ -200,7 +199,7 @@ def calculate_flight_budget(graph: Graph, origin: int, stopover_budget: int, mon
 
             if budget_costs[neighbour_node_id] is None \
                     or new_monetary_cost < budget_costs[neighbour_node_id][0]:
-                
+
                 new_stopover_cost = stopover_costs[current_node_id] + 1
                 stopover_costs[neighbour_node_id] = new_stopover_cost
 
@@ -208,12 +207,13 @@ def calculate_flight_budget(graph: Graph, origin: int, stopover_budget: int, mon
                     budget_costs.insert(Destination(neighbour_node_id, None, new_monetary_cost, new_stopover_cost))
 
                 queue.insert(new_monetary_cost, neighbour_node_id)
-        
+
     budget_costs.remove(origin)
     budget_costs_sorted = budget_costs.get_items()
     budget_costs_sorted.sort()
 
     return budget_costs_sorted
+
 
 def maintenance_optimisation(graph: Graph, origin: int) -> ExtensibleList:
     """
@@ -256,16 +256,17 @@ def maintenance_optimisation(graph: Graph, origin: int) -> ExtensibleList:
 
             if budget_costs[neighbour_node_id] is None \
                     or new_monetary_cost < budget_costs[neighbour_node_id]:
-                
+
                 budget_costs[neighbour_node_id] = new_monetary_cost
 
                 queue.insert(new_monetary_cost, neighbour_node_id)
-        
+
     budget_costs.remove(origin)
     budget_costs_sorted = budget_costs.get_items()
     budget_costs_sorted.sort()
 
     return budget_costs_sorted
+
 
 def all_city_logistics(graph: Graph) -> Map:
     """
@@ -282,5 +283,4 @@ def all_city_logistics(graph: Graph) -> Map:
       value should be an integer (cost of the path), or a TraversalFailure
       enumeration.
     """
-
     pass

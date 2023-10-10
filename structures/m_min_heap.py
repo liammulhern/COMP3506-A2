@@ -44,6 +44,7 @@ class MinHeapNode:
 class MinHeap:
     def __init__(self) -> None:
         self._list = ExtensibleList()
+        self._order_inc: int = 0
 
     def __str__(self) -> str:
         return str(self._list)
@@ -58,7 +59,8 @@ class MinHeap:
         return self._list[0]
 
     def insert(self, key: Any, data: Any) -> None:
-        node: MinHeapNode = MinHeapNode(key, data, self._list.get_size())
+        node: MinHeapNode = MinHeapNode(key, data, self._order_inc)
+        self._order_inc += 1
 
         self._list.append(node)
         self._up_heap()

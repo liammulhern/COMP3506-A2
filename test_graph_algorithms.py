@@ -47,6 +47,7 @@ def test_bonanza(graph: Graph, budget_stopover: int, budget_money: int) -> None:
     print ("==== Executing 4B ====")
     print ("B_s = ", budget_stopover, ", B_m = ", budget_money)
     origin = my_graph.generate_random_node_id()
+    # origin = 0
     print ("Origin: ", origin)
     # sorted_candidates is an ExtensibleList of Destination types
     sorted_candidates = calculate_flight_budget(graph, origin, budget_stopover, budget_money)
@@ -71,7 +72,7 @@ def test_all_city(graph: Graph) -> None:
     You may wish to expand this test.
     """
     print ("==== Executing All City Logistics ====")
-    query_map = all_city_logistics(graph)
+    query_map = all_city_logistics(my_graph)
     print ("==== Generated the Map: Running queries")
     # Generate ten random pairs and run them in both directions
     for i in range(0, 10):
@@ -86,20 +87,8 @@ def test_all_city(graph: Graph) -> None:
         cost = query_map.find(key)
         print ("Cost from ", node_a, " to ", node_b, " with key ", key ," is = ", cost)
 
-def test_debug():
-    my_graph = None
-    my_graph = Graph()
-    my_graph.from_file("data/CUSTOM/test5.graph")
-    # my_graph.from_file("data/POSW/two.graph")
-
-    # test_hub_enumeration(my_graph, 0)
-    test_bonanza(my_graph, 2, 20)
-
 # The actual program we're running here
 if __name__ == "__main__":
-    
-    # test_debug()
-
     # Get and parse the command line arguments
     parser = argparse.ArgumentParser(description='COMP3506/7505 Assignment Two: Bogan Airlines')
 

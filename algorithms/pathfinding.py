@@ -5,17 +5,14 @@ The University of Queensland
 NOTE: This file will be used for marking.
 """
 
-from structures.m_entry import Entry
-from structures.m_single_linked_list import SingleLinkedList, SingleNode
 from structures.m_extensible_list import ExtensibleList
 from structures.m_graph import Graph, LatticeGraph, Node, LatticeNode
 from structures.m_map import Map
 from structures.m_set import Set
 from structures.m_pqueue import PriorityQueue
 from structures.m_stack import Stack
-from structures.m_util import Hashable, TraversalFailure
+from structures.m_util import TraversalFailure
 
-from typing import Any
 
 class TraversalNode:
     def __init__(self, id: int, path: ExtensibleList = ExtensibleList()) -> None:
@@ -25,10 +22,10 @@ class TraversalNode:
         self.set_start(id)
 
     def __str__(self) -> str:
-        return f"{self._id}:{self._path}"        
+        return f"{self._id}:{self._path}"
 
     def __repr__(self) -> str:
-        return f"{self._id}:{self._path}"        
+        return f"{self._id}:{self._path}"
 
     def set_start(self, start_id: int) -> None:
         self._path.append(start_id)
@@ -38,6 +35,7 @@ class TraversalNode:
 
     def get_path(self) -> ExtensibleList:
         return self._path
+
 
 def dfs_traversal(
     graph: Graph | LatticeGraph, origin: int, goal: int
@@ -76,10 +74,10 @@ def dfs_traversal(
             path = get_traversal_path(goal, previous_nodes)
             return (path, visited_order)
 
-        # If a node has not been visited... visit it 
+        # If a node has not been visited... visit it
         if not visited_ids.exists(current_node_id):
             visited_order.append(current_node_id)
-            visited_ids.add(current_node_id) 
+            visited_ids.add(current_node_id)
 
         neighbour_nodes: list[Node] = graph.get_neighbours(current_node_id)
         neighbour_nodes_size: int = len(neighbour_nodes)
@@ -94,17 +92,19 @@ def dfs_traversal(
     # If you couldn't get to the goal, you should return like this
     return (TraversalFailure.DISCONNECTED, visited_order)
 
+
 def get_traversal_path(goal: int, previous_nodes: Map) -> ExtensibleList:
-    current_id: int = goal 
+    current_id: int = goal
     path = ExtensibleList()
 
     while current_id is not None:
         path.append(current_id)
         current_id = previous_nodes[current_id]
 
-    path.reverse() 
+    path.reverse()
 
     return path
+
 
 def bfs_traversal(
     graph: Graph | LatticeGraph, origin: int, goal: int
@@ -129,7 +129,7 @@ def bfs_traversal(
     # Stores the keys of the nodes in the order they were visited
     visited_order = ExtensibleList()
 
-    queue: PriorityQueue = PriorityQueue() 
+    queue: PriorityQueue = PriorityQueue()
     previous_nodes: Map = Map()
     visited_ids: Set = Set()
 
@@ -143,22 +143,25 @@ def bfs_traversal(
             visited_order.append(current_node_id)
             return (path, visited_order)
 
-        if not visited_ids.exists(current_node_id):
-            visited_ids.add(current_node_id)
-            visited_order.append(current_node_id)
+        if visited_ids.exists(current_node_id):
+            continue
 
-            neighbour_nodes: list[Node] = graph.get_neighbours(current_node_id)
-            neighbour_nodes_size: int = len(neighbour_nodes)
+        visited_ids.add(current_node_id)
+        visited_order.append(current_node_id)
 
-            for i in range(neighbour_nodes_size):
-                neighbour_node_id: Node = neighbour_nodes[i].get_id()
+        neighbour_nodes: list[Node] = graph.get_neighbours(current_node_id)
+        neighbour_nodes_size: int = len(neighbour_nodes)
 
-                if not visited_ids.exists(neighbour_node_id):
-                    previous_nodes[neighbour_node_id] = current_node_id
-                    queue.insert_fifo(neighbour_node_id)
+        for i in range(neighbour_nodes_size):
+            neighbour_node_id: Node = neighbour_nodes[i].get_id()
+
+            if not visited_ids.exists(neighbour_node_id):
+                previous_nodes[neighbour_node_id] = current_node_id
+                queue.insert_fifo(neighbour_node_id)
 
     # If you couldn't get to the goal, you should return like this
     return (TraversalFailure.DISCONNECTED, visited_order)
+
 
 def greedy_traversal(
     graph: LatticeGraph, origin: int, goal: int
@@ -183,14 +186,14 @@ def greedy_traversal(
     # Stores the keys of the nodes in the order they were visited
     visited_order = ExtensibleList()
 
-    queue: PriorityQueue = PriorityQueue() 
+    queue: PriorityQueue = PriorityQueue()
     previous_nodes: Map = Map()
     visited_ids: Set = Set()
 
     queue.insert(0, origin)
 
     goal_node: LatticeNode = graph.get_node(goal)
-    goal_position: tuple[int, int]= goal_node.get_coordinates()
+    goal_position: tuple[int, int] = goal_node.get_coordinates()
 
     while not queue.is_empty():
         current_node_id: int = queue.remove_min()
@@ -220,6 +223,7 @@ def greedy_traversal(
 
     # If you couldn't get to the goal, you should return like this
     return (TraversalFailure.DISCONNECTED, visited_order)
+
 
 def get_node_distance(position_1: tuple[int, int], position_2: tuple[int, int]) -> float:
     x_1, y_1 = position_1
@@ -258,7 +262,7 @@ def max_traversal(
     """
     visited_order = ExtensibleList()
 
-    queue: PriorityQueue = PriorityQueue() 
+    queue: PriorityQueue = PriorityQueue()
     previous_nodes: Map = Map()
     visited_ids: Set = Set()
 
@@ -297,5 +301,3 @@ def max_traversal(
 
     # If you couldn't get to the goal, you should return like this
     return (TraversalFailure.DISCONNECTED, visited_order)
-
-

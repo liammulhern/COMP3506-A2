@@ -20,17 +20,14 @@ get_hash function to return -1 for example.
 """
 
 from typing import Any
+import time
 from random import randint 
 
 from structures.m_entry import Entry
-from structures.m_single_linked_list import SingleLinkedList
-from structures.m_single_linked_list import SingleNode
-from structures.m_doubly_linked_list import DoubleLinkedList
-from structures.m_doubly_linked_list import DoubleNode
 from structures.m_extensible_list import ExtensibleList
 
 INITIAL_CAPACITY: int = 8
-LOAD_FACTOR_REHASH: float = 2/3
+LOAD_FACTOR_REHASH: float = 0.6
 PRIME_NUMBER: int = 109345121
 
 class Map:
@@ -38,7 +35,6 @@ class Map:
     An implementation of the Map ADT.
     The provided methods consume keys and values via the Entry type.
     """
-
     def __init__(self) -> None:
         """
         Construct the map.
@@ -46,8 +42,9 @@ class Map:
         to initialise your map.
         """
         self._size: int = 0
+        self._apparent_size: int = 0
         self._capacity: int = INITIAL_CAPACITY
-        self._entry_array: list[DoubleLinkedList | None] = [None] * INITIAL_CAPACITY
+        self._entry_array: list[Any | None] = [None] * INITIAL_CAPACITY
         self._MAD_a: int = randint(1, PRIME_NUMBER - 1)
         self._MAD_b: int = randint(0, PRIME_NUMBER - 1)
 
@@ -55,44 +52,27 @@ class Map:
         return str(self)
 
     def __str__(self) -> str:
-        """
-        Get the printable string representation of the map
-        """
         size: int = 0
-        str_out: str = "{"
+        str_out: str = "{" 
 
-        first_index = True 
+        first_entry = True
+        
+        for i in range(self._capacity):           
+            if self._entry_array[i] is None:
+                continue
 
-        for i in range(self._capacity):
             if size == self._size:
                 break
 
-            chain: DoubleLinkedList | None = self._entry_array[i]
-            
-            if chain is None:
-                continue
-
-            if not first_index:
+            if not first_entry:
                 str_out += ", "
             else:
-                first_index = False
+                first_entry = False
 
-            cur_node: DoubleNode | None = chain.get_head() 
+            entry: Entry = self._entry_array[i]
 
-            # Iterate over chain and rehash each entry
-            first_entry = True
-
-            while cur_node is not None:
-
-                if not first_entry:
-                    str_out += ", "
-                else:
-                    first_entry = False
-
-                cur_entry: Entry = cur_node.get_data()
-                str_out += f"{str(cur_entry)}"
-                size += 1
-                cur_node = cur_node.get_next()
+            str_out += str(entry)
+            size += 1
 
         str_out += "}"
 
@@ -106,34 +86,31 @@ class Map:
         """
         load_factor = self._get_load_factor()
 
-        # Rehash map if load factor exceeds threshold (2/3)
+        # Rehash map if load factor exceeds threshold
         if load_factor > LOAD_FACTOR_REHASH:
             self._rehash()
 
-        hash_index: int = self._get_hash_index_MAD(entry) 
-        previous_value: Any | None = None 
-        chain: DoubleLinkedList | None = self._entry_array[hash_index]
-        entry_node: DoubleNode = DoubleNode(entry)
+        initial_hash_index: int = self._get_hash_index(entry) 
+        hash_index = initial_hash_index
 
-        # Initialise chain at hashed index if it does not currently have one
-        if chain is None:
-            chain = self._entry_array[hash_index] = DoubleLinkedList()
-            chain.insert_to_back(entry_node)
+        probe_iteration: int = 0
+        update: bool = False
+
+        while self._entry_array[hash_index] is not None:
+            cur_entry: Entry = self._entry_array[hash_index]
+           
+            if cur_entry == entry:
+                update = True
+                break
+ 
+            hash_index = self._get_probe_index(initial_hash_index, probe_iteration)
+            probe_iteration += 1
+
+        self._entry_array[hash_index] = entry
+
+        if not update:
             self._size += 1
-            return previous_value
-
-        # Iterate over chain until matching key is found or end is reached
-        cur_node: DoubleNode | None = chain.find_element(entry)
-
-        if cur_node is None:
-            # Reached end of chain without finding matching key
-            chain.insert_to_back(entry_node)
-            self._size += 1
-        else:
-            # Found matching key in chain so update value
-            cur_node.set_data(entry)
-
-        return previous_value
+            self._apparent_size += 1
 
     def insert_kv(self, key: Any, value: Any) -> Any | None:
         """
@@ -159,52 +136,109 @@ class Map:
         Remove the key/value pair corresponding to key k from the
         data structure. Don't return anything.
         """
-        # You may or may not need this variable depending on your impl.
-        dummy_entry = Entry(key, None) # Feel free to remove me...
-
-        hash_index: int = self._get_hash_index_MAD(dummy_entry) 
-        chain: DoubleLinkedList | None = self._entry_array[hash_index]
-
-        # Initialise chain at hashed index if it does not currently have one
-        if chain is None:
-            return
+        dummy_entry = Entry(key, None)
         
-        # Iterate over chain until matching key is found or end is reached
-        removed_entry: Entry = chain.find_and_remove_element(dummy_entry)
+        initial_hash_index: int = self._get_hash_index(dummy_entry) 
+        hash_index = initial_hash_index
 
-        # Key was not in chain
-        if removed_entry is None:
-            return
+        probe_iteration: int = 0
+        
+        while self._entry_array[hash_index] is not None:
+            entry: Entry = self._entry_array[hash_index]
 
-        self._size -= 1
+            if entry == dummy_entry:
+                self._entry_array[hash_index] = Entry(None, None)
+                self._size -= 1
+                return 
+
+            hash_index = self._get_probe_index(initial_hash_index, probe_iteration)
+            probe_iteration += 1
 
     def find(self, key: Any) -> Any | None:
         """
         Find and return the value v corresponding to key k if it
         exists; return None otherwise.
         """
-        # You may or may not need this variable depending on your impl.
-        dummy_entry: Entry = Entry(key, None) # Feel free to remove me...
-        hash_index: int = self._get_hash_index_MAD(dummy_entry)
-        chain: DoubleLinkedList | None = self._entry_array[hash_index]
+        dummy_entry = Entry(key, None)
+        
+        initial_hash_index: int = self._get_hash_index(dummy_entry) 
+        hash_index = initial_hash_index
 
-        if chain is None:
-            return None
+        probe_iteration: int = 0
 
-        cur_node: DoubleNode | None = chain.find_element(dummy_entry)
+        while self._entry_array[hash_index] is not None:
+            entry: Entry = self._entry_array[hash_index]
 
-        if cur_node is None:
-            return None
+            if entry == dummy_entry:
+                return entry.get_value()
 
-        enrty: Entry = cur_node.get_data()
+            hash_index = self._get_probe_index(initial_hash_index, probe_iteration)
+            probe_iteration += 1
 
-        return enrty.get_value()
+        return None
 
     def exists(self, key: Any) -> bool:
         """
         Return true if a key exists in the map, false otherwise.
         """
         return self.find(key) is not None
+
+    def get_keys(self) -> ExtensibleList:
+        current_size: int = 0
+        keys: ExtensibleList = ExtensibleList()
+        empty_entry: Entry = Entry(None, None)
+
+        for i in range(self._capacity):
+            if current_size == self._size:
+                break
+
+            entry: Entry | None = self._entry_array[i]
+
+            if entry is None or entry == empty_entry:
+                continue
+
+            keys.append(entry.get_key())
+            current_size += 1
+        
+        return keys
+
+    def get_values(self) -> ExtensibleList:
+        current_size: int = 0
+        values: ExtensibleList = ExtensibleList()
+        empty_entry: Entry = Entry(None, None)
+
+        for i in range(self._capacity):
+            if current_size == self._size:
+                break
+
+            entry: Entry | None = self._entry_array[i]
+
+            if entry is None or entry == empty_entry:
+                continue
+
+            values.append(entry.get_value())
+            current_size += 1
+        
+        return values
+
+    def get_items(self) -> ExtensibleList:
+        current_size: int = 0
+        items: ExtensibleList = ExtensibleList()
+        empty_entry: Entry = Entry(None, None)
+
+        for i in range(self._capacity):
+            if current_size == self._size:
+                break
+
+            entry: Entry | None = self._entry_array[i]
+
+            if entry is None or entry == empty_entry:
+                continue
+
+            items.append(entry)
+            current_size += 1
+        
+        return items
 
     def __getitem__(self, key: Any) -> Any | None:
         """
@@ -218,84 +252,6 @@ class Map:
 
     def is_empty(self) -> bool:
         return self._size == 0
-
-    def get_keys(self) -> ExtensibleList:
-        """
-        Get all map keys as an extensible list 
-        """ 
-        size: int = 0
-        keys: ExtensibleList = ExtensibleList() 
-
-
-        for i in range(self._capacity):
-            if size == self._size:
-                break
-
-            chain: SingleLinkedList | None = self._entry_array[i]
-            
-            if chain is None:
-                continue
-
-            cur_node: SingleNode | None = chain.get_head() 
-
-            # Iterate over chain and rehash each entry
-            while cur_node is not None:
-                cur_entry: Entry = cur_node.get_data()
-                keys.append(cur_entry.get_key())
-                size += 1
-                cur_node = cur_node.get_next()
-
-        return keys
-
-    def get_values(self) -> ExtensibleList:
-        """
-        Get all map values as an extensible list
-        """
-        size: int = 0
-        values: ExtensibleList = ExtensibleList() 
-
-        for i in range(self._capacity):
-            if size == self._size:
-                break
-
-            chain: SingleLinkedList | None = self._entry_array[i]
-            
-            if chain is None:
-                continue
-
-            cur_node: SingleNode | None = chain.get_head() 
-
-            # Iterate over chain and rehash each entry
-            while cur_node is not None:
-                cur_entry: Entry = cur_node.get_data()
-                values.append(cur_entry.get_value())
-                size += 1
-                cur_node = cur_node.get_next()
-
-        return values
-
-    def get_items(self) -> ExtensibleList:
-        size: int = 0
-        items: ExtensibleList = ExtensibleList() 
-
-        for i in range(self._capacity):
-            if size == self._size:
-                break
-
-            chain: SingleLinkedList | None = self._entry_array[i]
-            
-            if chain is None:
-                continue
-
-            cur_node: SingleNode | None = chain.get_head() 
-
-            while cur_node is not None:
-                cur_entry: Entry = cur_node.get_data()
-                items.append(cur_entry)
-                size += 1
-                cur_node = cur_node.get_next()
-
-        return items
 
     def _get_hash_index(self, entry: Entry) -> int:
         """
@@ -314,36 +270,46 @@ class Map:
 
         return hash_index
 
-    def _rehash(self) -> None:
+    def _get_probe_index(self, hash_index: int, iteration: int) -> int:
+        return (hash_index + iteration) % self._capacity
+
+    def _get_quadratic_probe_index(self, hash_index: int, iteration: int) -> int:
         """
-        Resize and redistribute the keys of the map if the load factor exceeds 
+        Get quadratic probe index
         """
-        old_capacity: int = self._capacity
-        old_entry_array: list[DoubleLinkedList | None] = self._entry_array
-
-        self._size = 0
-        self._capacity *= 2
-        self._entry_array = [None] * self._capacity
-        actual_size: int = 0
-
-        # Iterate over old entry array and rehash entries
-        for i in range(old_capacity):
-            chain: DoubleLinkedList | None = old_entry_array[i]
-
-            if chain is None:
-                continue
-                
-            cur_node: DoubleNode | None = chain.get_head() 
-            actual_size += chain.get_size()
-
-            # Iterate over chain and rehash each entry
-            while cur_node is not None:
-                cur_entry: Entry = cur_node.get_data()
-                self.insert(cur_entry)
-                cur_node = cur_node.get_next()
+        return (hash_index + pow(iteration, 2)) % self._capacity
 
     def _get_load_factor(self) -> float:
         """
         Get the load factor of the map.
         """
-        return self._size / self._capacity
+        return self._apparent_size / self._capacity
+
+    def _rehash(self) -> None:
+        """
+        Rehash the map and increase its capacity
+        """
+        old_capacity: int = self._capacity
+        old_size: int = self._size
+        old_entry_array: list[Entry | None] = self._entry_array
+        
+        self._size = 0
+        self._apparent_size = 0
+        self._capacity *= 3
+        self._entry_array = [None] * self._capacity
+        
+        current_size: int = 0
+
+        empty_entry: Entry = Entry(None, None)
+
+        for i in range(old_capacity):
+            if current_size == old_size:
+                break
+
+            entry: Entry | None = old_entry_array[i]
+
+            if entry is None or entry == empty_entry:
+                continue
+
+            self.insert(entry)
+            current_size += 1

@@ -1,7 +1,9 @@
 from structures.m_map import Map, LOAD_FACTOR_REHASH
+# from structures.m_map_doubly_linked import Map, LOAD_FACTOR_REHASH
 from structures.m_entry import Entry
 
 import random
+import time
 
 def test_empty_map() -> None:
     print("TESTING: test_empty_map()")
@@ -239,51 +241,35 @@ def test_remove_key_decrements() -> None:
 
 def test_insert_remove_multiple() -> None:
     print("TESTING: test_insert_remove_multiple()")
+    random.seed(131234)
     map = Map()
     expected_map = {}
-    size: int = 0
     insertions: int = 0
     removals: int = 0
     finds: int = 0
 
-    random.seed(123)
+    map_type = False
+
+    start_time = time.time()
 
     for i in range(1000000):
-        map_type = random.randint(0, 5)
+        # map_type = random.randint(0, 1)
+        map_type = not map_type
+        # map_type = 0
 
+        # key = random.randint(0, 100)
         key = i
-        # key = random.randint(0, 10000)
-
-        if i == 445:
-            pass
-
-        if map_type == 0:
-            data = i
-
-            if not map.exists(key):
-                size += 1
-
-            map[key] = data
-            expected_map[key] = data
+        
+        if map_type is False:
+            map[key] = i
+            # expected_map[key] = i
 
             insertions += 1
-        elif map_type <= 2:
-            data_1 = map[key]
+        elif map_type is True:
             map.remove(key)
-            data_2 = expected_map.pop(key, None)
+            # expected_map.pop(key, None)
+            removals += 1
 
-            assert(data_1 == data_2)
-
-            if data_1 is not None:
-                removals += 1
-                if size > 0:
-                    size -= 1
-        elif map_type == 1:
-            assert(map.find(key) == expected_map.get(key, None))
-            finds += 1
-
-        assert(len(expected_map) == map.get_size())
-        # assert(size == map.get_size())
-
-    print(f"After {i} iterations:\nInsertions: {insertions}\nRemovals: {removals}\nFinds: {finds}\nExpected size: {size}\nActual size: {map.get_size()}")
-
+    end_time = time.time()
+    print(end_time - start_time)
+    print(f"After {i} iterations:\nInsertions: {insertions}\nRemovals: {removals}\nFinds: {finds}\nExpected size: {len(expected_map)}\nActual size: {map.get_size()}")

@@ -12,46 +12,30 @@ class Set(Map):
         super().insert_kv(key, 0)
 
     def __str__(self) -> str:
-        """
-        Get the printable string representation of the map
-        """
         size: int = 0
-        str_out: str = "{"
+        str_out: str = "{" 
 
-        first_index = True 
+        first_entry = True
+        
+        for i in range(self._capacity):           
+            if self._entry_array[i] is None:
+                continue
 
-        for i in range(self._capacity):
             if size == self._size:
                 break
 
-            chain: SingleLinkedList | None = self._entry_array[i]
-            
-            if chain is None:
-                continue
-
-            if not first_index:
+            if not first_entry:
                 str_out += ", "
             else:
-                first_index = False
+                first_entry = False
 
-            cur_node: SingleNode | None = chain.get_head() 
+            entry: Entry = self._entry_array[i]
 
-            # Iterate over chain and rehash each entry
-            first_entry = True
-
-            while cur_node is not None:
-
-                if not first_entry:
-                    str_out += ", "
-                else:
-                    first_entry = False
-
-                cur_entry: Entry = cur_node.get_data()
-                str_out += f"{str(cur_entry.get_key())}"
-                size += 1
-                cur_node = cur_node.get_next()
+            str_out += str(entry.get_key())
+            size += 1
 
         str_out += "}"
 
         return str_out
+
 

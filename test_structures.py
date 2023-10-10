@@ -60,6 +60,7 @@ def test_map() -> None:
     map_tests.test_remove_key_removes_correct_key()
     map_tests.test_remove_key_removes_all_correct_key()
     map_tests.test_remove_key_decrements()
+    map_tests.test_insert_remove_multiple()
 
 def test_sort() -> None:
     """
@@ -83,11 +84,6 @@ def test_sort() -> None:
     sort_tests.test_random_order_list()
     sort_tests.test_duplicate_elements()
 
-def test_debug():
-    # test_pqueue()
-    map_tests.test_insert_remove_multiple()
-    sys.exit()
-
 # The actual program we're running here
 if __name__ == "__main__":
     # Get and parse the command line arguments
@@ -103,7 +99,6 @@ if __name__ == "__main__":
     # No arguments passed
     if len(sys.argv) == 1:
         parser.print_help() 
-        test_debug()
         sys.exit(-1)
 
     # Test each 
