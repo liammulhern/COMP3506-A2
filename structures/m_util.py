@@ -6,13 +6,14 @@ NOTE: This file will be used for marking.
 """
 
 from enum import Enum
-from abc import ABC, abstractmethod 
+from abc import ABC, abstractmethod
+
 
 class Hashable(ABC):
     """
     A special object that can be inherited to enforce objects to be hashable
     """
-    
+
     def __init__(self) -> None:
         """
         You are free to do anything you find suitable to initialise your
@@ -38,10 +39,5 @@ class TraversalFailure(Enum):
     """ The graph is disconnected and the origin and the target lie in different components. """
 
     NEGATIVE_CYCLE = 2
-    """ The graph contains a cycle of negative weight 
+    """ The graph contains a cycle of negative weight
     and the path between the origin and the target passes through it. """
-
-
-"""
-Any other utilities can go below here.
-"""

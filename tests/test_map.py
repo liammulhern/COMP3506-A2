@@ -1,9 +1,7 @@
 from structures.m_map import Map, LOAD_FACTOR_REHASH
-# from structures.m_map_doubly_linked import Map, LOAD_FACTOR_REHASH
 from structures.m_entry import Entry
-
-import random
 import time
+
 
 def test_empty_map() -> None:
     print("TESTING: test_empty_map()")
@@ -12,8 +10,9 @@ def test_empty_map() -> None:
 
     print(map)
 
-    assert(map.is_empty() == True)
-    assert(map.get_size() == 0)   
+    assert map.is_empty() is True
+    assert map.get_size() == 0
+
 
 def test_insert_not_empty() -> None:
     print("TESTING: test_insert_not_empty()")
@@ -26,8 +25,9 @@ def test_insert_not_empty() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 1)
+    assert map.is_empty() is False
+    assert map.get_size() == 1
+
 
 def test_insert_size_increments() -> None:
     print("TESTING: test_insert_size_increments()")
@@ -43,8 +43,9 @@ def test_insert_size_increments() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 3)   
+    assert map.is_empty() is False
+    assert map.get_size() == 3
+
 
 def test_insert_multiple_entry_types() -> None:
     print("TESTING: test_insert_multiple_entry_types()")
@@ -64,8 +65,9 @@ def test_insert_multiple_entry_types() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 5)   
+    assert map.is_empty() is False
+    assert map.get_size() == 5
+
 
 def test_insert_same_key_replaces() -> None:
     print("TESTING: test_insert_same_key_replaces()")
@@ -77,16 +79,17 @@ def test_insert_same_key_replaces() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 1)
-    assert(map[1] == "Item1")
+    assert map.is_empty() is False
+    assert map.get_size() == 1
+    assert map[1] == "Item1"
 
     e2 = Entry(1, "Item2")
     map.insert(e2)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 1)
-    assert(map[1] == "Item2")
+    assert map.is_empty() is False
+    assert map.get_size() == 1
+    assert map[1] == "Item2"
+
 
 def test_insert_rehashes_on_capacity() -> None:
     print("TESTING: test_insert_rehashes_on_capacity()")
@@ -112,9 +115,10 @@ def test_insert_rehashes_on_capacity() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 8)
-    assert(map._get_load_factor() < LOAD_FACTOR_REHASH)
+    assert map.is_empty() is False
+    assert map.get_size() == 8
+    assert map._get_load_factor() < LOAD_FACTOR_REHASH
+
 
 def test_find_returns_correct_value() -> None:
     print("TESTING: test_find_returns_correct_value()")
@@ -128,12 +132,13 @@ def test_find_returns_correct_value() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 2)
-    assert(map[1] == "Item1")
-    assert(map.find(1) == "Item1")
-    assert(map["A"] == "Item2")
-    assert(map.find("A") == "Item2")
+    assert map.is_empty() is False
+    assert map.get_size() == 2
+    assert map[1] == "Item1"
+    assert map.find(1) == "Item1"
+    assert map["A"] == "Item2"
+    assert map.find("A") == "Item2"
+
 
 def test_find_no_key_returns_none() -> None:
     print("TESTING: test_find_no_key_returns_none()")
@@ -147,10 +152,11 @@ def test_find_no_key_returns_none() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 2)
-    assert(map.find("B") == None)
- 
+    assert map.is_empty() is False
+    assert map.get_size() == 2
+    assert map.find("B") is None
+
+
 def test_remove_no_key_no_changes() -> None:
     print("TESTING: test_remove_no_key_no_changes()")
     map = Map()
@@ -163,15 +169,16 @@ def test_remove_no_key_no_changes() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 2)
+    assert map.is_empty() is False
+    assert map.get_size() == 2
 
     map.remove("B")
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 2)
+    assert map.is_empty() is False
+    assert map.get_size() == 2
 
     print(map)
+
 
 def test_remove_key_removes_correct_key() -> None:
     print("TESTING: test_remove_key_removes_correct_key()")
@@ -185,15 +192,16 @@ def test_remove_key_removes_correct_key() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 2)
+    assert map.is_empty() is False
+    assert map.get_size() == 2
 
     map.remove(1)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 1)
+    assert map.is_empty() is False
+    assert map.get_size() == 1
 
     print(map)
+
 
 def test_remove_key_removes_all_correct_key() -> None:
     print("TESTING: test_remove_key_removes_correct_key()")
@@ -207,17 +215,18 @@ def test_remove_key_removes_all_correct_key() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 2)
+    assert map.is_empty() is False
+    assert map.get_size() == 2
 
     map.remove(1)
     map.remove("A")
     map.remove("B")
 
-    assert(map.is_empty() == True)
-    assert(map.get_size() == 0)
+    assert map.is_empty() is True
+    assert map.get_size() == 0
 
     print(map)
+
 
 def test_remove_key_decrements() -> None:
     print("TESTING: test_remove_key_decrements()")
@@ -229,47 +238,38 @@ def test_remove_key_decrements() -> None:
 
     print(map)
 
-    assert(map.is_empty() == False)
-    assert(map.get_size() == 1)
+    assert map.is_empty() is False
+    assert map.get_size() == 1
 
     map.remove(1)
 
-    assert(map.is_empty() == True)
-    assert(map.get_size() == 0)
+    assert map.is_empty() is True
+    assert map.get_size() == 0
 
     print(map)
 
+
 def test_insert_remove_multiple() -> None:
     print("TESTING: test_insert_remove_multiple()")
-    random.seed(131234)
     map = Map()
-    expected_map = {}
-    insertions: int = 0
-    removals: int = 0
-    finds: int = 0
-
     map_type = False
+    insertions = 0
+    removals = 0
 
     start_time = time.time()
 
     for i in range(1000000):
-        # map_type = random.randint(0, 1)
         map_type = not map_type
-        # map_type = 0
 
-        # key = random.randint(0, 100)
         key = i
-        
+
         if map_type is False:
             map[key] = i
-            # expected_map[key] = i
-
             insertions += 1
         elif map_type is True:
             map.remove(key)
-            # expected_map.pop(key, None)
             removals += 1
 
     end_time = time.time()
     print(end_time - start_time)
-    print(f"After {i} iterations:\nInsertions: {insertions}\nRemovals: {removals}\nFinds: {finds}\nExpected size: {len(expected_map)}\nActual size: {map.get_size()}")
+    print(f"After {i} iterations:\nInsertions: {insertions}\nRemovals: {removals}\nActual size: {map.get_size()}")

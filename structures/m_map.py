@@ -20,15 +20,13 @@ get_hash function to return -1 for example.
 """
 
 from typing import Any
-import time
-from random import randint 
 
 from structures.m_entry import Entry
 from structures.m_extensible_list import ExtensibleList
 
 INITIAL_CAPACITY: int = 8
 LOAD_FACTOR_REHASH: float = 0.6
-PRIME_NUMBER: int = 109345121
+
 
 class Map:
     """
@@ -45,19 +43,17 @@ class Map:
         self._apparent_size: int = 0
         self._capacity: int = INITIAL_CAPACITY
         self._entry_array: list[Any | None] = [None] * INITIAL_CAPACITY
-        self._MAD_a: int = randint(1, PRIME_NUMBER - 1)
-        self._MAD_b: int = randint(0, PRIME_NUMBER - 1)
 
     def __repr__(self) -> str:
         return str(self)
 
     def __str__(self) -> str:
         size: int = 0
-        str_out: str = "{" 
+        str_out: str = "{"
 
         first_entry = True
-        
-        for i in range(self._capacity):           
+
+        for i in range(self._capacity):
             if self._entry_array[i] is None:
                 continue
 
@@ -90,7 +86,7 @@ class Map:
         if load_factor > LOAD_FACTOR_REHASH:
             self._rehash()
 
-        initial_hash_index: int = self._get_hash_index(entry) 
+        initial_hash_index: int = self._get_hash_index(entry)
         hash_index = initial_hash_index
 
         probe_iteration: int = 0
@@ -98,11 +94,11 @@ class Map:
 
         while self._entry_array[hash_index] is not None:
             cur_entry: Entry = self._entry_array[hash_index]
-           
+
             if cur_entry == entry:
                 update = True
                 break
- 
+
             hash_index = self._get_probe_index(initial_hash_index, probe_iteration)
             probe_iteration += 1
 
@@ -121,7 +117,7 @@ class Map:
         """
         entry = Entry(key, value)
         return self.insert(entry)
-      
+
     def __setitem__(self, key: Any, value: Any) -> None:
         """
         For convenience, you may wish to use this as an alternative
@@ -137,19 +133,19 @@ class Map:
         data structure. Don't return anything.
         """
         dummy_entry = Entry(key, None)
-        
-        initial_hash_index: int = self._get_hash_index(dummy_entry) 
+
+        initial_hash_index: int = self._get_hash_index(dummy_entry)
         hash_index = initial_hash_index
 
         probe_iteration: int = 0
-        
+
         while self._entry_array[hash_index] is not None:
             entry: Entry = self._entry_array[hash_index]
 
             if entry == dummy_entry:
                 self._entry_array[hash_index] = Entry(None, None)
                 self._size -= 1
-                return 
+                return
 
             hash_index = self._get_probe_index(initial_hash_index, probe_iteration)
             probe_iteration += 1
@@ -160,8 +156,8 @@ class Map:
         exists; return None otherwise.
         """
         dummy_entry = Entry(key, None)
-        
-        initial_hash_index: int = self._get_hash_index(dummy_entry) 
+
+        initial_hash_index: int = self._get_hash_index(dummy_entry)
         hash_index = initial_hash_index
 
         probe_iteration: int = 0
@@ -199,7 +195,7 @@ class Map:
 
             keys.append(entry.get_key())
             current_size += 1
-        
+
         return keys
 
     def get_values(self) -> ExtensibleList:
@@ -218,7 +214,7 @@ class Map:
 
             values.append(entry.get_value())
             current_size += 1
-        
+
         return values
 
     def get_items(self) -> ExtensibleList:
@@ -237,7 +233,7 @@ class Map:
 
             items.append(entry)
             current_size += 1
-        
+
         return items
 
     def __getitem__(self, key: Any) -> Any | None:
@@ -245,7 +241,7 @@ class Map:
         For convenience, you may wish to use this as an alternative
         for find()
         """
-        return self.find(key) 
+        return self.find(key)
 
     def get_size(self) -> int:
         return self._size
@@ -258,15 +254,6 @@ class Map:
         Get the hash index of the entry by taking mod N
         """
         hash_index: int = entry.get_hash() % self._capacity
-
-        return hash_index
-
-    def _get_hash_index_MAD(self, entry: Entry) -> int:
-        """
-        Implements MAD compression:
-            h(y) = ((ay + b) mod p ) mod N
-        """
-        hash_index: int = ((self._MAD_a * entry.get_hash() + self._MAD_b) % PRIME_NUMBER) % self._capacity
 
         return hash_index
 
@@ -292,12 +279,12 @@ class Map:
         old_capacity: int = self._capacity
         old_size: int = self._size
         old_entry_array: list[Entry | None] = self._entry_array
-        
+
         self._size = 0
         self._apparent_size = 0
         self._capacity *= 3
         self._entry_array = [None] * self._capacity
-        
+
         current_size: int = 0
 
         empty_entry: Entry = Entry(None, None)

@@ -61,7 +61,7 @@ class ExtensibleList:
         Bounds checked access
         """
         if index >= 0 and index < self._size:
-          return self._data[index]
+            return self._data[index]
         return None
 
     def __getitem__(self, index: int) -> Any | None:
@@ -70,7 +70,7 @@ class ExtensibleList:
         An alias for get_at
         """
         return self.get_at(index)
-  
+
     def set_at(self, index: int, element: Any) -> None:
         """
         Allows an item to be overwritten if it is within the current logical
@@ -153,7 +153,7 @@ class ExtensibleList:
         Reverse the extensible list.
         """
         start = 0
-        end = self._size - 1 
+        end = self._size - 1
 
         while start < end:
             temp = self._data[start]
@@ -180,12 +180,7 @@ class ExtensibleList:
 
             self._merge_list(start_index, middle_index, end_index)
 
-    def _merge_list(
-            self,
-            start_index: int, 
-            middle_index: int, 
-            end_index: int
-        ) -> None:
+    def _merge_list(self, start_index: int, middle_index: int, end_index: int) -> None:
         """
         """
         left_index: int = start_index

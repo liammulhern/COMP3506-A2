@@ -8,7 +8,6 @@ you should submit your modified version.
 
 # so we can hint SingleNode get_next
 from __future__ import annotations
-
 from typing import Any
 
 
@@ -21,7 +20,7 @@ class SingleNode:
         self._next = None  # This is the "next" pointer to the next SingleNode
 
     def __repr__(self) -> str:
-        return str(self) 
+        return str(self)
 
     def __str__(self) -> str:
         return str(self._data)
@@ -37,7 +36,8 @@ class SingleNode:
 
     def get_next(self) -> SingleNode | None:
         return self._next
-    
+
+
 class SingleLinkedList:
     """
     Singly linked list. You may update it if you like.

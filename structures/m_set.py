@@ -1,9 +1,7 @@
 from structures.m_map import Map
 from structures.m_entry import Entry
-from structures.m_single_linked_list import SingleLinkedList
-from structures.m_single_linked_list import SingleNode
-
 from typing import Any
+
 
 class Set(Map):
     def add(self, key: Any) -> None:
@@ -13,11 +11,11 @@ class Set(Map):
 
     def __str__(self) -> str:
         size: int = 0
-        str_out: str = "{" 
+        str_out: str = "{"
 
         first_entry = True
-        
-        for i in range(self._capacity):           
+
+        for i in range(self._capacity):
             if self._entry_array[i] is None:
                 continue
 
@@ -37,5 +35,3 @@ class Set(Map):
         str_out += "}"
 
         return str_out
-
-

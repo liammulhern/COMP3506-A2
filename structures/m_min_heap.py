@@ -1,6 +1,6 @@
 from structures.m_extensible_list import ExtensibleList
-
 from typing import Any
+
 
 class MinHeapNode:
     def __init__(self, key: Any, data: Any, order: int = 0) -> None:
@@ -15,20 +15,20 @@ class MinHeapNode:
         return self._key
 
     def __str__(self) -> str:
-        return f"{self._key}: {self._data}" 
+        return f"{self._key}: {self._data}"
 
     def __repr__(self) -> str:
-        return str(self) 
+        return str(self)
 
     def __lt__(self, other: 'MinHeapNode') -> bool:
         if self._key == other._key:
             return self._order < other._order
 
         return self._key < other._key
- 
+
     def __le__(self, other: 'MinHeapNode') -> bool:
         return self.__lt__(other)
-    
+
     def __eq__(self, other: 'MinHeapNode') -> bool:
         return self._key == other._key
 
@@ -40,7 +40,8 @@ class MinHeapNode:
 
     def __ge__(self, other: 'MinHeapNode') -> bool:
         return self.__gt__(other)
-    
+
+
 class MinHeap:
     def __init__(self) -> None:
         self._list = ExtensibleList()
@@ -86,7 +87,7 @@ class MinHeap:
         current_index: int = self.get_size() - 1
 
         while current_index > 0:
-            parent_node: MinHeapNode | None =  self._get_parent_node(current_index)
+            parent_node: MinHeapNode | None = self._get_parent_node(current_index)
 
             if parent_node is None:
                 break
@@ -97,7 +98,7 @@ class MinHeap:
             parent_index: int = self._get_parent_index(current_index)
             self._swap_nodes(parent_index, current_index)
 
-            current_index = parent_index 
+            current_index = parent_index
 
     def _down_heap(self, start_index: int) -> None:
         if self.is_empty():
@@ -110,7 +111,7 @@ class MinHeap:
 
             if left_index > self.get_size() - 1:
                 break
-            
+
             least_index: int = left_index
             right_index: int = self._get_right_index(current_index)
 
@@ -129,14 +130,14 @@ class MinHeap:
                 break
 
     def _swap_nodes(self, index_1: int, index_2: int) -> None:
-        temp: MinHeapNode = self._list[index_1] 
+        temp: MinHeapNode = self._list[index_1]
 
         self._list[index_1] = self._list[index_2]
         self._list[index_2] = temp
 
     def get_size(self) -> int:
         return self._list.get_size()
-    
+
     def is_empty(self) -> bool:
         return self._list.is_empty()
 
@@ -156,7 +157,7 @@ class MinHeap:
     def _get_left_index(self, index: int) -> int:
         left_index: int = (2 * index) + 1
 
-        return left_index 
+        return left_index
 
     def _get_left_node(self, index: int) -> MinHeapNode | None:
         left_index: int = self._get_left_index(index)

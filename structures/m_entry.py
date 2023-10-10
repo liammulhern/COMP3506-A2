@@ -11,6 +11,7 @@ from structures.m_util import Hashable
 HASH_SEED: int = 146816784
 MAX_HASH_ITERATIONS: int = 10
 
+
 class Entry(Hashable):
     """
     Implements a simple type that holds keys and values. Extends the Hashable
@@ -20,7 +21,7 @@ class Entry(Hashable):
         """
         An entry has a key (used for comparing to other entries or for hashing)
         and a corresponding value which represents some arbitrary data associated
-        with the key. 
+        with the key.
         """
         self._key = key
         self._value = value
@@ -69,7 +70,7 @@ class Entry(Hashable):
         data = str(self.get_key())
 
         seed = HASH_SEED
-        
+
         hash_iterations: int = len(data)
 
         for i in range(hash_iterations):
@@ -79,13 +80,13 @@ class Entry(Hashable):
 
         return seed
 
+
 class Destination(Entry):
     """
     A special type of entry that tracks the monetary and stopover costs of
     a trip from some origin to a destination. You can use _value however
     you like, or ignore it completely.
     """
-
     def __init__(self, key: Any, value: Any, cost_money: int, cost_stopover: int) -> None:
         super().__init__(key, (cost_money, cost_stopover))
         self._cost_m = cost_money
@@ -116,8 +117,8 @@ class Destination(Entry):
         if self._cost_m == other._cost_m:
             if self._cost_s < other._cost_s:
                 return True
-            
+
             if self._cost_s == other._cost_s:
                 return self._key < other._key
-        
+
         return False

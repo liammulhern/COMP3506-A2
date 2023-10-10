@@ -6,9 +6,9 @@ NOTE: This file will be used for marking.
 """
 
 from typing import Any
-
 from structures.m_min_heap import MinHeap
 from structures.m_min_heap import MinHeapNode
+
 
 class PriorityQueue:
     """
@@ -19,7 +19,7 @@ class PriorityQueue:
     For convenience, you may wish to also implement the functionality provided in
     terms of the Entry type, but this is up to you.
     """
-    
+
     def __init__(self):
         """
         Construct the priority queue.
@@ -41,7 +41,7 @@ class PriorityQueue:
         Hint: FIFO queue can just always have the same priority value, no
         need to implement an extra function.
         """
-        self._heap.insert(priority, data) 
+        self._heap.insert(priority, data)
 
     def insert_fifo(self, data: Any) -> None:
         """
@@ -50,8 +50,8 @@ class PriorityQueue:
         insert_fifo() - they will either use one all of the time, or the
         other all of the time.
         """
-        self._heap.insert(0, data) 
-        
+        self._heap.insert(0, data)
+
     def get_min(self) -> Any:
         """
         Return the highest priority value from the queue, but do not remove it

@@ -231,6 +231,7 @@ def get_node_distance(position_1: tuple[int, int], position_2: tuple[int, int]) 
 
     return distance(x_1, y_1, x_2, y_2)
 
+
 def distance(x_1: float, y_1: float, x_2: float, y_2: float) -> float:
     """
     Return the distance between a point at coordinate (x_1, y_1) and a point
@@ -239,6 +240,7 @@ def distance(x_1: float, y_1: float, x_2: float, y_2: float) -> float:
     """
     # Calculate Manhattan Distance
     return abs(x_1 - x_2) + abs(y_1 - y_2)
+
 
 def max_traversal(
     graph: LatticeGraph, origin: int, goal: int
@@ -271,7 +273,7 @@ def max_traversal(
     max_distance: int = get_node_distance(graph.get_dimensions(), (0, 0))
 
     goal_node: LatticeNode = graph.get_node(goal)
-    goal_position: tuple[int, int]= goal_node.get_coordinates()
+    goal_position: tuple[int, int] = goal_node.get_coordinates()
 
     while not queue.is_empty():
         current_node_id: int = queue.remove_min()

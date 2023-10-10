@@ -133,7 +133,8 @@ def _find_subgraphs_of_degree(graph: Graph, min_degree: int) -> SingleLinkedList
     return visited_order
 
 
-def _update_neighbour_node_degree(graph: Graph, neighbour_nodes: list[Node], visited_order: ExtensibleList, min_degree: int) -> None:
+def _update_neighbour_node_degree(graph: Graph, neighbour_nodes: list[Node],
+                                  visited_order: ExtensibleList, min_degree: int) -> None:
     """
     """
     neighbour_nodes_size: int = len(neighbour_nodes)
