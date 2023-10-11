@@ -76,40 +76,6 @@ class Entry(Hashable):
 
         return hash
 
-    def get_hash_murmur(self) -> int:
-        bytes = str(self.get_key()).encode()
-        length = len(bytes)
-        hash = HASH_SEED
-
-        for i in range(0, length, 4):
-            data = bytes[i]
-            hash ^= self._murmur_scramble(data)
-
-            hash = (hash << 13) | (hash >> 19)
-            hash = (hash * 5 + 0xe6546b64) & 0xFFFFFFFF
-
-        k = 0
-        for j in range(i + 1, length):
-            k <<= 8
-            k |= bytes[j]
-
-        hash ^= self._murmur_scramble(k)
-        hash ^= length
-        hash ^= hash >> 16
-        hash = (hash * 0x85ebca6b) & 0xFFFFFFFF
-        hash ^= hash >> 13
-        hash = (hash * 0xc2b2ae35) & 0xFFFFFFFF
-        hash ^= hash >> 16
-
-        return hash
-
-    def _murmur_scramble(self, k: int) -> int:
-        k *= 0xcc9e2d51
-        k = (k << 15) | (k >> 17)
-        k *= 0x1b873593
-
-        return k
-
 
 class Destination(Entry):
     """
