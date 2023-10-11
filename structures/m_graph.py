@@ -219,6 +219,9 @@ class Graph:
         else:
             return [self._nodes[neighbour] for neighbour, _ in self._edges[index]]
 
+    def get_edges(self) -> list[list[int]] | list[list[tuple[int, int]]] | None:
+        return self._edges
+
     def generate_random_node_id(self) -> int | None:
         """
         Return a random node identifier from the graph or None if empty.

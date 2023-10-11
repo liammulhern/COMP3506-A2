@@ -44,11 +44,11 @@ class MinHeapNode:
 
 class MinHeap:
     def __init__(self) -> None:
-        self._list = ExtensibleList()
+        self._node_ex_list = ExtensibleList()
         self._order_inc: int = 0
 
     def __str__(self) -> str:
-        return str(self._list)
+        return str(self._node_ex_list)
 
     def __repr__(self) -> str:
         return str(self)
@@ -57,29 +57,29 @@ class MinHeap:
         if self.is_empty():
             return None
 
-        return self._list[0]
+        return self._node_ex_list[0]
 
     def insert(self, key: Any, data: Any) -> None:
         # Assign order to inserted node for mathcing key comparison
         node: MinHeapNode = MinHeapNode(key, data, self._order_inc)
         self._order_inc += 1
 
-        self._list.append(node)
+        self._node_ex_list.append(node)
         self._up_heap()
 
     def remove_min(self) -> Any | None:
         if self.is_empty():
             return None
 
-        size: int = self._list.get_size()
+        size: int = self._node_ex_list.get_size()
 
-        min_node: MinHeapNode = self._list[0]
+        min_node: MinHeapNode = self._node_ex_list[0]
 
         # Replace the root with the last node
-        self._list[0] = self._list[size - 1]
+        self._node_ex_list[0] = self._node_ex_list[size - 1]
 
         # Remove the last node
-        self._list.remove_at(size - 1)
+        self._node_ex_list.remove_at(size - 1)
         self._down_heap(0)
 
         return min_node
@@ -93,7 +93,7 @@ class MinHeap:
             if parent_node is None:
                 break
 
-            if parent_node <= self._list[current_index]:
+            if parent_node <= self._node_ex_list[current_index]:
                 break
 
             parent_index: int = self._get_parent_index(current_index)
@@ -117,12 +117,12 @@ class MinHeap:
             right_index: int = self._get_right_index(current_index)
 
             if right_index < self.get_size() - 1 \
-                    and self._list[right_index] < self._list[left_index]:
+                    and self._node_ex_list[right_index] < self._node_ex_list[left_index]:
 
                 least_index = right_index
 
-            current_node = self._list[current_index]
-            least_node = self._list[least_index]
+            current_node = self._node_ex_list[current_index]
+            least_node = self._node_ex_list[least_index]
 
             if current_node > least_node:
                 self._swap_nodes(current_index, least_index)
@@ -131,16 +131,16 @@ class MinHeap:
                 break
 
     def _swap_nodes(self, index_1: int, index_2: int) -> None:
-        temp: MinHeapNode = self._list[index_1]
+        temp: MinHeapNode = self._node_ex_list[index_1]
 
-        self._list[index_1] = self._list[index_2]
-        self._list[index_2] = temp
+        self._node_ex_list[index_1] = self._node_ex_list[index_2]
+        self._node_ex_list[index_2] = temp
 
     def get_size(self) -> int:
-        return self._list.get_size()
+        return self._node_ex_list.get_size()
 
     def is_empty(self) -> bool:
-        return self._list.is_empty()
+        return self._node_ex_list.is_empty()
 
     def _get_parent_index(self, index: int) -> int:
         parent_index: int = (index - 1) // 2
@@ -153,7 +153,7 @@ class MinHeap:
         if parent_index < 0:
             return None
 
-        return self._list[parent_index]
+        return self._node_ex_list[parent_index]
 
     def _get_left_index(self, index: int) -> int:
         left_index: int = (2 * index) + 1
@@ -166,7 +166,7 @@ class MinHeap:
         if left_index > self.get_size() - 1:
             return None
 
-        return self._list[left_index]
+        return self._node_ex_list[left_index]
 
     def _get_right_index(self, index: int) -> int:
         right_index: int = (2 * index) + 2
@@ -179,4 +179,4 @@ class MinHeap:
         if right_index > self.get_size() - 1:
             return None
 
-        return self._list[right_index]
+        return self._node_ex_list[right_index]

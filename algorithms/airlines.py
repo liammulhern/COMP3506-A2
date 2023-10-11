@@ -13,7 +13,9 @@ from structures.m_set import Set
 from structures.m_pqueue import PriorityQueue
 from structures.m_stack import Stack
 from structures.m_single_linked_list import SingleLinkedList
+from structures.m_util import TraversalFailure
 
+import math
 
 def has_cycles(graph: Graph) -> bool:
     """
@@ -101,7 +103,6 @@ def _find_subgraphs_of_degree(graph: Graph, min_degree: int) -> SingleLinkedList
         origin_node_id: int = origin_node.get_id()
 
         if not visited_ids.exists(origin_node_id):
-            # visited_order: ExtensibleList = ExtensibleList()
             stack.push(origin_node_id)
 
             # Complete DFS for iterated origin node
@@ -197,9 +198,9 @@ def calculate_flight_budget(graph: Graph, origin: int, stopover_budget: int, mon
             neighbour_node_id = neighbour_node.get_id()
 
             new_monetary_cost: int = monetary_cost + neighbour_node_cost
+            old_budget_cost_node: int | None = budget_costs[neighbour_node_id]
 
-            if budget_costs[neighbour_node_id] is None \
-                    or new_monetary_cost < budget_costs[neighbour_node_id][0]:
+            if old_budget_cost_node is None or new_monetary_cost < old_budget_cost_node:
 
                 new_stopover_cost = stopover_costs[current_node_id] + 1
                 stopover_costs[neighbour_node_id] = new_stopover_cost
@@ -254,10 +255,9 @@ def maintenance_optimisation(graph: Graph, origin: int) -> ExtensibleList:
             neighbour_node_id = neighbour_node.get_id()
 
             new_monetary_cost: int = monetary_cost + neighbour_node_cost
+            old_budget_cost: int | None = budget_costs[neighbour_node_id]
 
-            if budget_costs[neighbour_node_id] is None \
-                    or new_monetary_cost < budget_costs[neighbour_node_id]:
-
+            if old_budget_cost is None or new_monetary_cost < budget_costs[neighbour_node_id]:
                 budget_costs[neighbour_node_id] = new_monetary_cost
 
                 queue.insert(new_monetary_cost, neighbour_node_id)
@@ -284,4 +284,103 @@ def all_city_logistics(graph: Graph) -> Map:
       value should be an integer (cost of the path), or a TraversalFailure
       enumeration.
     """
-    pass
+    node_pair_costs: Map = _create_graph_cartesian_product_map(graph)
+
+    # Iterate over the graph from each prospective origin
+    for origin in range(graph.get_size()):
+        _find_negative_cycles(graph, node_pair_costs, origin)
+
+    items = node_pair_costs.get_items()
+    items.sort()
+    print(items)
+
+    return node_pair_costs
+
+
+def _create_graph_cartesian_product_map(graph: Graph) -> Map:
+    """
+    Creates a map with keys as the cartesian product of graph nodes.
+    """
+    node_cartesian_product: Map = Map()
+
+    # Create cartesian pairs for integers 0 to n
+    for i in range(graph.get_size()):
+        for j in range(i + 1, graph.get_size()):
+            product_1: str = f"{i}_{j}"
+            product_2: str = f"{j}_{i}"
+            node_cartesian_product[product_1] = TraversalFailure.DISCONNECTED 
+            node_cartesian_product[product_2] = TraversalFailure.DISCONNECTED
+
+    return node_cartesian_product
+
+
+def _find_negative_cycles(graph: Graph, node_pairs_costs: Map, origin: int) -> Set:
+    """
+    Use the Bellman-Ford algorithm to find negative cycles in the graph and 
+    return a set of visited nodes.
+    """
+    neighbours = graph.get_neighbours(origin)
+
+    if len(neighbours) == 0:
+        return
+
+    edges = graph.get_edges()
+
+    # Perfome bellman ford algorithm to find the cost of reaching each avaliable node.
+    for i in range(graph.get_size() - 1):
+        _bellman_ford_algorithm(edges, node_pairs_costs, origin, negative_cycle=False)
+
+    # Repeat bellman ford algorithm again to see if any costs change,
+    # if they do it is a negative cycle.
+    for i in range(graph.get_size() - 1):
+        _bellman_ford_algorithm(edges, node_pairs_costs, origin, negative_cycle=True)
+
+    # Remove any self referencing entries
+    for i in range(graph.get_size()):
+        node_pair_same: str = f"{i}_{i}"
+        node_pairs_costs.remove(node_pair_same)
+
+
+def _bellman_ford_algorithm(
+        edges: list[list[tuple[int, int]]] | None,
+        node_pairs_costs: Map, 
+        origin: int, 
+        negative_cycle:bool=False) -> None:
+    """
+    Implementation of the bellman ford algorithm, to find negative cycles.
+    """
+    for j in range(len(edges)):
+        for k in range(len(edges[j])):
+            edge = edges[j][k]
+            node_destination_id, node_cost = edge
+
+            # Create the key from the origin to the edges
+            node_pair_1: str = f"{origin}_{j}"
+            node_pair_2: str = f"{origin}_{node_destination_id}"
+
+            node_pair_cost_1: int = 0
+            node_pair_cost_2: int = 0
+
+            # Set the cost weightings depending on current cost type
+            if j != origin:
+                node_pair_cost_1 = node_pairs_costs[node_pair_1]
+
+                if node_pair_cost_1 is TraversalFailure.DISCONNECTED:
+                    continue
+                elif node_pair_cost_1 is TraversalFailure.NEGATIVE_CYCLE:
+                    continue
+
+            if node_destination_id != origin:
+                node_pair_cost_2 = node_pairs_costs[node_pair_2]
+
+                if node_pair_cost_2 is TraversalFailure.DISCONNECTED:
+                    node_pair_cost_2 = math.inf
+                elif node_pair_cost_2 is TraversalFailure.NEGATIVE_CYCLE:
+                    continue
+
+            # Check if new shortest path is found
+            if node_pair_cost_1 + node_cost < node_pair_cost_2:
+                if negative_cycle:
+                    node_pairs_costs[node_pair_2] = TraversalFailure.NEGATIVE_CYCLE
+                else:
+                    node_pairs_costs[node_pair_2] = node_pair_cost_1 + node_cost

@@ -258,7 +258,7 @@ def test_insert_remove_multiple() -> None:
 
     start_time = time.time()
 
-    for i in range(10000):
+    for i in range(1000000):
         map_type = not map_type
 
         key = i
@@ -283,7 +283,7 @@ def test_insert_find_multiple() -> None:
 
     start_time = time.time()
 
-    for i in range(3000000):
+    for i in range(1000000):
         key = i
 
         map[key] = i
@@ -291,10 +291,10 @@ def test_insert_find_multiple() -> None:
 
     insert_end_time = time.time()
 
-    for i in range(3000000):
+    for i in range(1000000):
         key = i
 
     find_end_time = time.time()
 
-    print(f"After {i} iterations:\nInsert Time: {insert_end_time - start_time}\nInsertions: {insertions}\nActual size: {map.get_size()}")
-    print(f"Find Time: {find_end_time - insert_end_time}")
+    print(f"After {i} iterations:\nInsert Time: {insert_end_time - start_time}\nInsertions: {insertions}")
+    print(f"Actual size: {map.get_size()}\nFind Time: {find_end_time - insert_end_time}")

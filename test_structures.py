@@ -87,7 +87,6 @@ def test_sort() -> None:
 
 # The actual program we're running here
 if __name__ == "__main__":
-    test_map()
     # Get and parse the command line arguments
     parser = argparse.ArgumentParser(description='COMP3506/7505 Assignment Two: Data Structure Tests')
 

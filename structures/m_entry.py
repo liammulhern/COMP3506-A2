@@ -71,7 +71,7 @@ class Entry(Hashable):
 
         for i in range(len(bytes)):
             hash ^= bytes[i]
-            hash *= 0x5bd1e995
+            hash = (hash * 0x5bd1e995) & 0xFFFFFFFF
             hash ^= hash >> 15
 
         return hash
@@ -84,7 +84,7 @@ class Destination(Entry):
     you like, or ignore it completely.
     """
     def __init__(self, key: Any, value: Any, cost_money: int, cost_stopover: int) -> None:
-        super().__init__(key, (cost_money, cost_stopover))
+        super().__init__(key, cost_money)
         self._cost_m = cost_money
         self._cost_s = cost_stopover
 

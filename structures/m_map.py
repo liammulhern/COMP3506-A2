@@ -269,11 +269,11 @@ class Map:
 
         return hash_index
 
-    def _get_probe_index(self, hash_index: int, iteration: int) -> int:
+    def _get_probe_index(self, initial_hash_index: int, iteration: int) -> int:
         """
         Get the next index to probe for insertion or find.
         """
-        return (hash_index + iteration) % self._capacity
+        return (initial_hash_index + iteration) % self._capacity
 
     def _get_load_factor(self) -> float:
         """
