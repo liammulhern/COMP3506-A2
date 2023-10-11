@@ -60,6 +60,7 @@ class MinHeap:
         return self._list[0]
 
     def insert(self, key: Any, data: Any) -> None:
+        # Assign order to inserted node for mathcing key comparison
         node: MinHeapNode = MinHeapNode(key, data, self._order_inc)
         self._order_inc += 1
 

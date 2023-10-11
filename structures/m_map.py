@@ -25,7 +25,7 @@ from structures.m_entry import Entry
 from structures.m_extensible_list import ExtensibleList
 
 INITIAL_CAPACITY: int = 8
-LOAD_FACTOR_REHASH: float = 0.6
+LOAD_FACTOR_REHASH: float = 0.66
 
 
 class Map:
@@ -48,6 +48,9 @@ class Map:
         return str(self)
 
     def __str__(self) -> str:
+        """
+        Get the string representation of a map {key: value, ...}
+        """
         size: int = 0
         str_out: str = "{"
 
@@ -180,6 +183,9 @@ class Map:
         return self.find(key) is not None
 
     def get_keys(self) -> ExtensibleList:
+        """
+        Get all the keys that are in the map as an extensible list.
+        """
         current_size: int = 0
         keys: ExtensibleList = ExtensibleList()
         empty_entry: Entry = Entry(None, None)
@@ -199,6 +205,9 @@ class Map:
         return keys
 
     def get_values(self) -> ExtensibleList:
+        """
+        Get all the values of the map as an extensible list.
+        """
         current_size: int = 0
         values: ExtensibleList = ExtensibleList()
         empty_entry: Entry = Entry(None, None)
@@ -218,6 +227,9 @@ class Map:
         return values
 
     def get_items(self) -> ExtensibleList:
+        """
+        Get all the entries of the map as an extensible list.
+        """
         current_size: int = 0
         items: ExtensibleList = ExtensibleList()
         empty_entry: Entry = Entry(None, None)
@@ -258,13 +270,10 @@ class Map:
         return hash_index
 
     def _get_probe_index(self, hash_index: int, iteration: int) -> int:
+        """
+        Get the next index to probe for insertion or find.
+        """
         return (hash_index + iteration) % self._capacity
-
-    def _get_quadratic_probe_index(self, hash_index: int, iteration: int) -> int:
-        """
-        Get quadratic probe index
-        """
-        return (hash_index + pow(iteration, 2)) % self._capacity
 
     def _get_load_factor(self) -> float:
         """

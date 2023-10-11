@@ -9,7 +9,6 @@ from typing import Any
 from structures.m_util import Hashable
 
 HASH_SEED: int = 146816784
-MAX_HASH_ITERATIONS: int = 10
 
 
 class Entry(Hashable):
@@ -66,19 +65,50 @@ class Entry(Hashable):
         welcome to use existing functions, but you need to implement it here
         (and cite it in your report/statement file).
         """
-        # You may add helpers/additional functionality below if you wish
-        data = str(self.get_key())
+        bytes = str(self.get_key()).encode()
 
-        seed = HASH_SEED
+        hash = HASH_SEED
 
-        hash_iterations: int = len(data)
+        for i in range(len(bytes)):
+            hash ^= bytes[i]
+            hash *= 0x5bd1e995
+            hash ^= hash >> 15
 
-        for i in range(hash_iterations):
-            seed ^= ord(data[i])
-            seed *= 0x5bd1e995
-            seed ^= seed >> 15
+        return hash
 
-        return seed
+    def get_hash_murmur(self) -> int:
+        bytes = str(self.get_key()).encode()
+        length = len(bytes)
+        hash = HASH_SEED
+
+        for i in range(0, length, 4):
+            data = bytes[i]
+            hash ^= self._murmur_scramble(data)
+
+            hash = (hash << 13) | (hash >> 19)
+            hash = (hash * 5 + 0xe6546b64) & 0xFFFFFFFF
+
+        k = 0
+        for j in range(i + 1, length):
+            k <<= 8
+            k |= bytes[j]
+
+        hash ^= self._murmur_scramble(k)
+        hash ^= length
+        hash ^= hash >> 16
+        hash = (hash * 0x85ebca6b) & 0xFFFFFFFF
+        hash ^= hash >> 13
+        hash = (hash * 0xc2b2ae35) & 0xFFFFFFFF
+        hash ^= hash >> 16
+
+        return hash
+
+    def _murmur_scramble(self, k: int) -> int:
+        k *= 0xcc9e2d51
+        k = (k << 15) | (k >> 17)
+        k *= 0x1b873593
+
+        return k
 
 
 class Destination(Entry):

@@ -61,6 +61,7 @@ def test_map() -> None:
     map_tests.test_remove_key_removes_all_correct_key()
     map_tests.test_remove_key_decrements()
     map_tests.test_insert_remove_multiple()
+    map_tests.test_insert_find_multiple()
 
 def test_sort() -> None:
     """
@@ -86,6 +87,7 @@ def test_sort() -> None:
 
 # The actual program we're running here
 if __name__ == "__main__":
+    test_map()
     # Get and parse the command line arguments
     parser = argparse.ArgumentParser(description='COMP3506/7505 Assignment Two: Data Structure Tests')
 
@@ -95,7 +97,7 @@ if __name__ == "__main__":
     parser.set_defaults(pq=False, map=False)
 
     args = parser.parse_args()
-    
+
     # No arguments passed
     if len(sys.argv) == 1:
         parser.print_help() 
