@@ -89,13 +89,6 @@ def test_all_city(graph: Graph) -> None:
 
 # The actual program we're running here
 if __name__ == "__main__":
-    my_graph = Graph()
-    # my_graph.from_file("data/ANYW/one.graph")
-    # my_graph.from_file("data/ANYW/five.graph")
-    my_graph.from_file("data/CUSTOM/test9.graph")
-    test_all_city(my_graph)
-
-    sys.exit()
     # Get and parse the command line arguments
     parser = argparse.ArgumentParser(description='COMP3506/7505 Assignment Two: Bogan Airlines')
 

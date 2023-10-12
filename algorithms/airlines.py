@@ -14,8 +14,8 @@ from structures.m_pqueue import PriorityQueue
 from structures.m_stack import Stack
 from structures.m_single_linked_list import SingleLinkedList
 from structures.m_util import TraversalFailure
-
 import math
+
 
 def has_cycles(graph: Graph) -> bool:
     """
@@ -286,13 +286,13 @@ def all_city_logistics(graph: Graph) -> Map:
     """
     node_pair_costs: Map = _create_graph_cartesian_product_map(graph)
 
-    # Iterate over the graph from each prospective origin
     for origin in range(graph.get_size()):
         _find_negative_cycles(graph, node_pair_costs, origin)
 
-    items = node_pair_costs.get_items()
-    items.sort()
-    print(items)
+    # Remove any self referencing entries
+    for origin in range(graph.get_size()):
+        node_pair_same: str = f"{origin}_{origin}"
+        node_pair_costs.remove(node_pair_same)
 
     return node_pair_costs
 
@@ -305,10 +305,10 @@ def _create_graph_cartesian_product_map(graph: Graph) -> Map:
 
     # Create cartesian pairs for integers 0 to n
     for i in range(graph.get_size()):
-        for j in range(i + 1, graph.get_size()):
+        for j in range(i, graph.get_size()):
             product_1: str = f"{i}_{j}"
             product_2: str = f"{j}_{i}"
-            node_cartesian_product[product_1] = TraversalFailure.DISCONNECTED 
+            node_cartesian_product[product_1] = TraversalFailure.DISCONNECTED
             node_cartesian_product[product_2] = TraversalFailure.DISCONNECTED
 
     return node_cartesian_product
@@ -316,7 +316,7 @@ def _create_graph_cartesian_product_map(graph: Graph) -> Map:
 
 def _find_negative_cycles(graph: Graph, node_pairs_costs: Map, origin: int) -> Set:
     """
-    Use the Bellman-Ford algorithm to find negative cycles in the graph and 
+    Use the Bellman-Ford algorithm to find negative cycles in the graph and
     return a set of visited nodes.
     """
     neighbours = graph.get_neighbours(origin)
@@ -325,62 +325,55 @@ def _find_negative_cycles(graph: Graph, node_pairs_costs: Map, origin: int) -> S
         return
 
     edges = graph.get_edges()
+    origin_node_pair: str = f"{origin}_{origin}"
+    node_pairs_costs[origin_node_pair] = 0
 
-    # Perfome bellman ford algorithm to find the cost of reaching each avaliable node.
+    # Perform Bellman-Ford algorithm to find the cost of reaching each avaliable node.
     for i in range(graph.get_size() - 1):
         _bellman_ford_algorithm(edges, node_pairs_costs, origin, negative_cycle=False)
 
-    # Repeat bellman ford algorithm again to see if any costs change,
+    # Repeat Bellman-Ford algorithm again to see if any costs change,
     # if they do it is a negative cycle.
     for i in range(graph.get_size() - 1):
         _bellman_ford_algorithm(edges, node_pairs_costs, origin, negative_cycle=True)
 
-    # Remove any self referencing entries
-    for i in range(graph.get_size()):
-        node_pair_same: str = f"{i}_{i}"
-        node_pairs_costs.remove(node_pair_same)
-
 
 def _bellman_ford_algorithm(
         edges: list[list[tuple[int, int]]] | None,
-        node_pairs_costs: Map, 
-        origin: int, 
-        negative_cycle:bool=False) -> None:
+        node_pairs_costs: Map,
+        origin: int,
+        negative_cycle: bool = False) -> None:
     """
-    Implementation of the bellman ford algorithm, to find negative cycles.
+    Implementation of the Bellman-Ford algorithm, to find negative cycles and minimum cost.
     """
-    for j in range(len(edges)):
-        for k in range(len(edges[j])):
-            edge = edges[j][k]
-            node_destination_id, node_cost = edge
+    for node_from_id in range(len(edges)):
+        for k in range(len(edges[node_from_id])):
+            edge = edges[node_from_id][k]
+            node_to_id, node_cost = edge
 
             # Create the key from the origin to the edges
-            node_pair_1: str = f"{origin}_{j}"
-            node_pair_2: str = f"{origin}_{node_destination_id}"
+            node_pair_from: str = f"{origin}_{node_from_id}"
+            node_pair_to: str = f"{origin}_{node_to_id}"
 
-            node_pair_cost_1: int = 0
-            node_pair_cost_2: int = 0
+            node_pair_cost_from = node_pairs_costs[node_pair_from]
 
-            # Set the cost weightings depending on current cost type
-            if j != origin:
-                node_pair_cost_1 = node_pairs_costs[node_pair_1]
+            # Update node 1 cost if path is disconnected or negative cycle
+            if node_pair_cost_from is TraversalFailure.DISCONNECTED:
+                continue
+            elif node_pair_cost_from is TraversalFailure.NEGATIVE_CYCLE:
+                node_pair_cost_from = -math.inf
 
-                if node_pair_cost_1 is TraversalFailure.DISCONNECTED:
-                    continue
-                elif node_pair_cost_1 is TraversalFailure.NEGATIVE_CYCLE:
-                    continue
+            node_pair_cost_to = node_pairs_costs[node_pair_to]
 
-            if node_destination_id != origin:
-                node_pair_cost_2 = node_pairs_costs[node_pair_2]
-
-                if node_pair_cost_2 is TraversalFailure.DISCONNECTED:
-                    node_pair_cost_2 = math.inf
-                elif node_pair_cost_2 is TraversalFailure.NEGATIVE_CYCLE:
-                    continue
+            # Update node 2 cost if path is disconnected or negative cycle
+            if node_pair_cost_to is TraversalFailure.DISCONNECTED:
+                node_pair_cost_to = math.inf
+            elif node_pair_cost_to is TraversalFailure.NEGATIVE_CYCLE:
+                continue
 
             # Check if new shortest path is found
-            if node_pair_cost_1 + node_cost < node_pair_cost_2:
+            if node_pair_cost_from + node_cost < node_pair_cost_to:
                 if negative_cycle:
-                    node_pairs_costs[node_pair_2] = TraversalFailure.NEGATIVE_CYCLE
+                    node_pairs_costs[node_pair_to] = TraversalFailure.NEGATIVE_CYCLE
                 else:
-                    node_pairs_costs[node_pair_2] = node_pair_cost_1 + node_cost
+                    node_pairs_costs[node_pair_to] = node_pair_cost_from + node_cost
