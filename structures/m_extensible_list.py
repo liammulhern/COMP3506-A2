@@ -31,7 +31,7 @@ class ExtensibleList:
         first = True
         for i in range(self._size):
             if not first:
-                string_rep += ",\n"
+                string_rep += ", "
             else:
                 first = False
             string_rep += str(self._data[i])

@@ -287,7 +287,7 @@ def all_city_logistics(graph: Graph) -> Map:
     node_pair_costs: Map = _create_graph_cartesian_product_map(graph)
 
     for origin in range(graph.get_size()):
-        _find_negative_cycles(graph, node_pair_costs, origin)
+        _find_graph_costs_and_negative_cycles(graph, node_pair_costs, origin)
 
     # Remove any self referencing entries
     for origin in range(graph.get_size()):
@@ -314,7 +314,7 @@ def _create_graph_cartesian_product_map(graph: Graph) -> Map:
     return node_cartesian_product
 
 
-def _find_negative_cycles(graph: Graph, node_pairs_costs: Map, origin: int) -> Set:
+def _find_graph_costs_and_negative_cycles(graph: Graph, node_pairs_costs: Map, origin: int) -> Set:
     """
     Use the Bellman-Ford algorithm to find negative cycles in the graph and
     return a set of visited nodes.
